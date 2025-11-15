@@ -1,249 +1,660 @@
 {
 	"info": {
 		"_postman_id": "718e86d3-2b7a-4e08-8161-1ba10298a7bd",
-		"name": "Queue Tester",
+		"name": "Qsmith",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "15064420",
 		"_collection_link": "https://stream-sharks.postman.co/workspace/StreamSharks~c31977d8-3cd7-46c2-8015-6fe26575ae74/collection/15064420-718e86d3-2b7a-4e08-8161-1ba10298a7bd?action=share&source=collection_link&creator=15064420"
 	},
 	"item": [
 		{
-			"name": "samples",
+			"name": "brokers",
 			"item": [
 				{
-					"name": "add",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "akn-tenant-id",
-								"value": "akn-dev-local",
-								"type": "text"
-							},
-							{
-								"key": "akn-user-id",
-								"value": "gabrielec",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"promotion\",\r\n    \"json_data\": {\r\n        \"envelope\": {\r\n            \"marketCode\": \"CZ\",\r\n            \"domain\": \"Party\",\r\n            \"channelId\": \"ASLF\",\r\n            \"businessProcess\": \"teamChanges:slpromotion\",\r\n            \"senderSystem\": \"OMS\"\r\n        },\r\n        \"payload\": [\r\n            {\r\n                \"marketCode\": \"CZ\",\r\n                \"representativeId\": \"CZ04068288\",\r\n                \"representativeType\": \"salesleader\",\r\n                \"structureZone\": \"CZ012\",\r\n                \"structureDivision\": \"CZ01\",\r\n                \"salesLeaderId\": null,\r\n                \"slAppointDdate\": \"2025-07-17T12:14:16\",\r\n                \"transDate\": \"2025-07-17T12:14:16\",\r\n                \"campaign\": \"202507\"\r\n            }\r\n        ]\r\n    }\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+					"name": "connections",
+					"item": [
+						{
+							"name": "insert",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"elasticmq\",\r\n    \"description\": \"broker per elasticmq\",\r\n    \"payload\": {\r\n        \"sourceType\": \"amazon-sqs\",\r\n        \"region\": \"eu-central-1\",\r\n        \"endpointUrl\": \"http://host.docker.internal:9324\",\r\n        \"secretsAccessKey\": \"x\",\r\n        \"accessKeyId\": \"x\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/connection",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"connection"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{QUEUE_TESTER_URL}}configuration/sample",
-							"host": [
-								"{{QUEUE_TESTER_URL}}configuration"
-							],
-							"path": [
-								"sample"
-							]
+						{
+							"name": "update",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\":\"b29916b2-c54f-4046-8bfa-b6c461c1e903\",\r\n    \"code\": \"elasticmq\",\r\n    \"description\": \"broker per elasticmq xxx\",\r\n    \"payload\": {\r\n        \"sourceType\": \"amazon-sqs\",\r\n        \"region\": \"eu-central-1\",\r\n        \"endpointUrl\": \"http://host.docker.internal:9324\",\r\n        \"secretsAccessKey\": \"x\",\r\n        \"accessKeyId\": \"x\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/connection",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"connection"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find-all",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/connection",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"connection"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find-by-id",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/connection/b29916b2-c54f-4046-8bfa-b6c461c1e903",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"connection",
+										"b29916b2-c54f-4046-8bfa-b6c461c1e903"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete-by-id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"promotion\",\r\n    \"json_data\": {\r\n        \"envelope\": {\r\n            \"marketCode\": \"CZ\",\r\n            \"domain\": \"Party\",\r\n            \"channelId\": \"ASLF\",\r\n            \"businessProcess\": \"teamChanges:slpromotion\",\r\n            \"senderSystem\": \"OMS\"\r\n        },\r\n        \"payload\": [\r\n            {\r\n                \"marketCode\": \"CZ\",\r\n                \"representativeId\": \"CZ04068288\",\r\n                \"representativeType\": \"salesleader\",\r\n                \"structureZone\": \"CZ012\",\r\n                \"structureDivision\": \"CZ01\",\r\n                \"salesLeaderId\": null,\r\n                \"slAppointDdate\": \"2025-07-17T12:14:16\",\r\n                \"transDate\": \"2025-07-17T12:14:16\",\r\n                \"campaign\": \"202507\"\r\n            }\r\n        ]\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/connection/b29916b2-c54f-4046-8bfa-b6c461c1e903",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"connection",
+										"b29916b2-c54f-4046-8bfa-b6c461c1e903"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "delete",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "akn-tenant-id",
-								"value": "akn-dev-local",
-								"type": "text"
-							},
-							{
-								"key": "akn-user-id",
-								"value": "gabrielec",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"promotion\",\r\n    \"json_data\": {\r\n        \"envelope\": {\r\n            \"marketCode\": \"CZ\",\r\n            \"domain\": \"Party\",\r\n            \"channelId\": \"ASLF\",\r\n            \"businessProcess\": \"teamChanges:slpromotion\",\r\n            \"senderSystem\": \"OMS\"\r\n        },\r\n        \"payload\": [\r\n            {\r\n                \"marketCode\": \"CZ\",\r\n                \"representativeId\": \"CZ04068288\",\r\n                \"representativeType\": \"salesleader\",\r\n                \"structureZone\": \"CZ012\",\r\n                \"structureDivision\": \"CZ01\",\r\n                \"salesLeaderId\": null,\r\n                \"slAppointDdate\": \"2025-07-17T12:14:16\",\r\n                \"transDate\": \"2025-07-17T12:14:16\",\r\n                \"campaign\": \"202507\"\r\n            }\r\n        ]\r\n    }\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+					"name": "queues",
+					"item": [
+						{
+							"name": "insert",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\":\"registrations\",\r\n    \"fifoQueue\": false,\r\n    \"contentBasedDeduplication\": false,\r\n    \"defaultVisibilityTimeout\": 30,\r\n    \"delay\": 0,\r\n    \"receiveMessageWait\":0\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/3f7ed106-6493-4ad2-a9f0-eb009b160b53/queue",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"3f7ed106-6493-4ad2-a9f0-eb009b160b53",
+										"queue"
+									]
 								}
-							}
-						},
-						"url": {
-							"raw": "{{QUEUE_TESTER_URL}}configuration/sample/promotion",
-							"host": [
-								"{{QUEUE_TESTER_URL}}configuration"
-							],
-							"path": [
-								"sample",
-								"promotion"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "find",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "akn-tenant-id",
-								"value": "akn-dev-local",
-								"type": "text"
 							},
-							{
-								"key": "akn-user-id",
-								"value": "gabrielec",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"response": []
 						},
-						"url": {
-							"raw": "{{QUEUE_TESTER_URL}}configuration/sample",
-							"host": [
-								"{{QUEUE_TESTER_URL}}configuration"
-							],
-							"path": [
-								"sample"
-							]
+						{
+							"name": "find-all",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/3f7ed106-6493-4ad2-a9f0-eb009b160b53/queue",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"3f7ed106-6493-4ad2-a9f0-eb009b160b53",
+										"queue"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find-by-id",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/3f7ed106-6493-4ad2-a9f0-eb009b160b53/queue/2031bdbb-0497-4baf-9e8a-e3862fe122db",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"3f7ed106-6493-4ad2-a9f0-eb009b160b53",
+										"queue",
+										"2031bdbb-0497-4baf-9e8a-e3862fe122db"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete-by-id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"promotion\",\r\n    \"json_data\": {\r\n        \"envelope\": {\r\n            \"marketCode\": \"CZ\",\r\n            \"domain\": \"Party\",\r\n            \"channelId\": \"ASLF\",\r\n            \"businessProcess\": \"teamChanges:slpromotion\",\r\n            \"senderSystem\": \"OMS\"\r\n        },\r\n        \"payload\": [\r\n            {\r\n                \"marketCode\": \"CZ\",\r\n                \"representativeId\": \"CZ04068288\",\r\n                \"representativeType\": \"salesleader\",\r\n                \"structureZone\": \"CZ012\",\r\n                \"structureDivision\": \"CZ01\",\r\n                \"salesLeaderId\": null,\r\n                \"slAppointDdate\": \"2025-07-17T12:14:16\",\r\n                \"transDate\": \"2025-07-17T12:14:16\",\r\n                \"campaign\": \"202507\"\r\n            }\r\n        ]\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/3f7ed106-6493-4ad2-a9f0-eb009b160b53/queue/9a8958c4-c2cc-42c2-9071-7038cf43d54d",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"3f7ed106-6493-4ad2-a9f0-eb009b160b53",
+										"queue",
+										"9a8958c4-c2cc-42c2-9071-7038cf43d54d"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "test",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"connectionConfig\": \"amazon-sqs-connection\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/3f7ed106-6493-4ad2-a9f0-eb009b160b53/queue/2031bdbb-0497-4baf-9e8a-e3862fe122db/test",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"3f7ed106-6493-4ad2-a9f0-eb009b160b53",
+										"queue",
+										"2031bdbb-0497-4baf-9e8a-e3862fe122db",
+										"test"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "receive_messages",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"count\":10\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/3f7ed106-6493-4ad2-a9f0-eb009b160b53/queue/2031bdbb-0497-4baf-9e8a-e3862fe122db/messages",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"3f7ed106-6493-4ad2-a9f0-eb009b160b53",
+										"queue",
+										"2031bdbb-0497-4baf-9e8a-e3862fe122db",
+										"messages"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "publish",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"messages\": [\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ04068288\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"name of rep\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"azulejandra98@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \" all address in one for ur info\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/3f7ed106-6493-4ad2-a9f0-eb009b160b53/queue/2031bdbb-0497-4baf-9e8a-e3862fe122db/messages",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"3f7ed106-6493-4ad2-a9f0-eb009b160b53",
+										"queue",
+										"2031bdbb-0497-4baf-9e8a-e3862fe122db",
+										"messages"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ack_messages",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"messages\": [\r\n        {\r\n            \"MessageId\": \"e8818a8b-4af1-46b7-9f3e-c90354599e2a\",\r\n            \"ReceiptHandle\": \"e8818a8b-4af1-46b7-9f3e-c90354599e2a#f1e38dce-32e2-44dd-9791-bd85e12327a4\",\r\n            \"MD5OfBody\": \"ab2f50d57c68267135b1c64cf6b231f2\",\r\n            \"Body\": \"{\\\"envelope\\\": {\\\"marketCode\\\": \\\"CZ\\\", \\\"domain\\\": \\\"Party\\\", \\\"channelId\\\": \\\"ASLF\\\", \\\"businessProcess\\\": \\\"createandupdate\\\", \\\"senderSystem\\\": \\\"OMS\\\"}, \\\"payload\\\": [{\\\"marketCode\\\": \\\"CZ\\\", \\\"representativeId\\\": \\\"CZ04068288\\\", \\\"campaign\\\": \\\"202507\\\", \\\"representativeType\\\": \\\"representative\\\", \\\"structureZone\\\": \\\"CZ012\\\", \\\"structureDivision\\\": \\\"CZ01\\\", \\\"salesLeaderId\\\": \\\"CZ07935590\\\", \\\"fullName\\\": \\\"name of rep\\\", \\\"transDate\\\": \\\"2025-07-17T12:14:16\\\", \\\"emailAddress\\\": \\\"azulejandra98@gmail.com\\\", \\\"phoneNumber\\\": \\\"+431224788744\\\", \\\"addressLine1\\\": \\\" all address in one for ur info\\\"}]}\"\r\n        },\r\n        {\r\n            \"MessageId\": \"7b5e657b-7a03-413e-9eae-94a129bc9e16\",\r\n            \"ReceiptHandle\": \"7b5e657b-7a03-413e-9eae-94a129bc9e16#703e044e-6b4f-4856-af5e-82eaf351b72f\",\r\n            \"MD5OfBody\": \"e1df7046aa7a43284c75477d5fe3de08\",\r\n            \"Body\": \"{\\\"MessageId\\\": \\\"e8818a8b-4af1-46b7-9f3e-c90354599e2a\\\", \\\"ReceiptHandle\\\": \\\"e8818a8b-4af1-46b7-9f3e-c90354599e2a#9c84d286-606f-4578-a5aa-e1a1927bdef3\\\", \\\"MD5OfBody\\\": \\\"ab2f50d57c68267135b1c64cf6b231f2\\\", \\\"Body\\\": \\\"{\\\\\\\"envelope\\\\\\\": {\\\\\\\"marketCode\\\\\\\": \\\\\\\"CZ\\\\\\\", \\\\\\\"domain\\\\\\\": \\\\\\\"Party\\\\\\\", \\\\\\\"channelId\\\\\\\": \\\\\\\"ASLF\\\\\\\", \\\\\\\"businessProcess\\\\\\\": \\\\\\\"createandupdate\\\\\\\", \\\\\\\"senderSystem\\\\\\\": \\\\\\\"OMS\\\\\\\"}, \\\\\\\"payload\\\\\\\": [{\\\\\\\"marketCode\\\\\\\": \\\\\\\"CZ\\\\\\\", \\\\\\\"representativeId\\\\\\\": \\\\\\\"CZ04068288\\\\\\\", \\\\\\\"campaign\\\\\\\": \\\\\\\"202507\\\\\\\", \\\\\\\"representativeType\\\\\\\": \\\\\\\"representative\\\\\\\", \\\\\\\"structureZone\\\\\\\": \\\\\\\"CZ012\\\\\\\", \\\\\\\"structureDivision\\\\\\\": \\\\\\\"CZ01\\\\\\\", \\\\\\\"salesLeaderId\\\\\\\": \\\\\\\"CZ07935590\\\\\\\", \\\\\\\"fullName\\\\\\\": \\\\\\\"name of rep\\\\\\\", \\\\\\\"transDate\\\\\\\": \\\\\\\"2025-07-17T12:14:16\\\\\\\", \\\\\\\"emailAddress\\\\\\\": \\\\\\\"azulejandra98@gmail.com\\\\\\\", \\\\\\\"phoneNumber\\\\\\\": \\\\\\\"+431224788744\\\\\\\", \\\\\\\"addressLine1\\\\\\\": \\\\\\\" all address in one for ur info\\\\\\\"}]}\\\"}\"\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}broker/3f7ed106-6493-4ad2-a9f0-eb009b160b53/queue/2031bdbb-0497-4baf-9e8a-e3862fe122db/messages",
+									"host": [
+										"{{QUEUE_TESTER_URL}}broker"
+									],
+									"path": [
+										"3f7ed106-6493-4ad2-a9f0-eb009b160b53",
+										"queue",
+										"2031bdbb-0497-4baf-9e8a-e3862fe122db",
+										"messages"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				}
 			]
 		},
 		{
-			"name": "data",
+			"name": "data-sources",
 			"item": [
 				{
-					"name": "add",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "akn-tenant-id",
-								"value": "akn-dev-local",
-								"type": "text"
-							},
-							{
-								"key": "akn-user-id",
-								"value": "gabrielec",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"registration_with_duplicate\",\r\n    \"json_data\": [\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ00000001\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"Gabriele\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"gabriele@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \"address1,address2,address3\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ00000002\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"Mirco\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"mirco@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \"address1,address2,address3\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ00000003\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"Lorenzo\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"lorenzo@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \"address1,address2,address3\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ00000004\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"Marco\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"marco@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \"address1,address2,address3\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ00000003\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"Lorenzo\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"lorenzo@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \"address1,address2,address3\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ00000004\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"Mirco\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"mirco@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \"address1,address2,address3\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+					"name": "json-array",
+					"item": [
+						{
+							"name": "insert",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"registration_with_duplicate\",\r\n    \"description\": \"Registration with duplicate\",\r\n    \"payload\": [\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ00000001\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"Gabriele\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"gabriele@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \"address1,address2,address3\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ00000002\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"Mirco\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"mirco@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \"address1,address2,address3\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ00000003\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"Lorenzo\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"lorenzo@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \"address1,address2,address3\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ00000004\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"Marco\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"marco@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \"address1,address2,address3\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ00000003\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"Lorenzo\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"lorenzo@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \"address1,address2,address3\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ00000004\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"Mirco\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"mirco@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \"address1,address2,address3\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}data-source/json-array",
+									"host": [
+										"{{QUEUE_TESTER_URL}}data-source"
+									],
+									"path": [
+										"json-array"
+									]
 								}
-							}
-						},
-						"url": {
-							"raw": "{{QUEUE_TESTER_URL}}configuration/data",
-							"host": [
-								"{{QUEUE_TESTER_URL}}configuration"
-							],
-							"path": [
-								"data"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "find",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "akn-tenant-id",
-								"value": "akn-dev-local",
-								"type": "text"
 							},
-							{
-								"key": "akn-user-id",
-								"value": "gabrielec",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"response": []
 						},
-						"url": {
-							"raw": "{{QUEUE_TESTER_URL}}configuration/data",
-							"host": [
-								"{{QUEUE_TESTER_URL}}configuration"
-							],
-							"path": [
-								"data"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "delete",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "akn-tenant-id",
-								"value": "akn-dev-local",
-								"type": "text"
+						{
+							"name": "find-all",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
 							},
-							{
-								"key": "akn-user-id",
-								"value": "gabrielec",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"promotion\",\r\n    \"json_data\": {\r\n        \"envelope\": {\r\n            \"marketCode\": \"CZ\",\r\n            \"domain\": \"Party\",\r\n            \"channelId\": \"ASLF\",\r\n            \"businessProcess\": \"teamChanges:slpromotion\",\r\n            \"senderSystem\": \"OMS\"\r\n        },\r\n        \"payload\": [\r\n            {\r\n                \"marketCode\": \"CZ\",\r\n                \"representativeId\": \"CZ04068288\",\r\n                \"representativeType\": \"salesleader\",\r\n                \"structureZone\": \"CZ012\",\r\n                \"structureDivision\": \"CZ01\",\r\n                \"salesLeaderId\": null,\r\n                \"slAppointDdate\": \"2025-07-17T12:14:16\",\r\n                \"transDate\": \"2025-07-17T12:14:16\",\r\n                \"campaign\": \"202507\"\r\n            }\r\n        ]\r\n    }\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}data-source/json-array",
+									"host": [
+										"{{QUEUE_TESTER_URL}}data-source"
+									],
+									"path": [
+										"json-array"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{QUEUE_TESTER_URL}}configuration/data/eee",
-							"host": [
-								"{{QUEUE_TESTER_URL}}configuration"
-							],
-							"path": [
-								"data",
-								"eee"
-							]
+						{
+							"name": "find-by-id",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "akn-tenant-id",
+										"value": "akn-dev-local",
+										"type": "text"
+									},
+									{
+										"key": "akn-user-id",
+										"value": "gabrielec",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{QUEUE_TESTER_URL}}data-source/json-array/49362d4b-99e1-4271-bb43-fe0c722e61ad",
+									"host": [
+										"{{QUEUE_TESTER_URL}}data-source"
+									],
+									"path": [
+										"json-array",
+										"49362d4b-99e1-4271-bb43-fe0c722e61ad"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				}
 			]
 		},
@@ -493,256 +904,16 @@
 			]
 		},
 		{
-			"name": "connections",
+			"name": "json_utils",
 			"item": [
 				{
-					"name": "queues",
-					"item": [
-						{
-							"name": "add",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "akn-tenant-id",
-										"value": "akn-dev-local",
-										"type": "text"
-									},
-									{
-										"key": "akn-user-id",
-										"value": "gabrielec",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"name\":\"elasticmq\",\r\n    \"sourceType\": \"amazon-sqs\",\r\n    \"region\": \"eu-central-1\",\r\n    \"queueUrl\": \"http://localhost:9324/000000000000/test-queue\",\r\n    \"secretsAccessKey\": \"x\",\r\n    \"accessKeyId\": \"x\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{QUEUE_TESTER_URL}}configuration/connection/queue",
-									"host": [
-										"{{QUEUE_TESTER_URL}}configuration"
-									],
-									"path": [
-										"connection",
-										"queue"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "find",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "akn-tenant-id",
-										"value": "akn-dev-local",
-										"type": "text"
-									},
-									{
-										"key": "akn-user-id",
-										"value": "gabrielec",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{QUEUE_TESTER_URL}}configuration/connection/queue/elasti",
-									"host": [
-										"{{QUEUE_TESTER_URL}}configuration"
-									],
-									"path": [
-										"connection",
-										"queue",
-										"elasti"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "delete",
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "akn-tenant-id",
-										"value": "akn-dev-local",
-										"type": "text"
-									},
-									{
-										"key": "akn-user-id",
-										"value": "gabrielec",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"promotion\",\r\n    \"json_data\": {\r\n        \"envelope\": {\r\n            \"marketCode\": \"CZ\",\r\n            \"domain\": \"Party\",\r\n            \"channelId\": \"ASLF\",\r\n            \"businessProcess\": \"teamChanges:slpromotion\",\r\n            \"senderSystem\": \"OMS\"\r\n        },\r\n        \"payload\": [\r\n            {\r\n                \"marketCode\": \"CZ\",\r\n                \"representativeId\": \"CZ04068288\",\r\n                \"representativeType\": \"salesleader\",\r\n                \"structureZone\": \"CZ012\",\r\n                \"structureDivision\": \"CZ01\",\r\n                \"salesLeaderId\": null,\r\n                \"slAppointDdate\": \"2025-07-17T12:14:16\",\r\n                \"transDate\": \"2025-07-17T12:14:16\",\r\n                \"campaign\": \"202507\"\r\n            }\r\n        ]\r\n    }\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{QUEUE_TESTER_URL}}configuration/connection/queue/eee",
-									"host": [
-										"{{QUEUE_TESTER_URL}}configuration"
-									],
-									"path": [
-										"connection",
-										"queue",
-										"eee"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "queue",
-			"item": [
-				{
-					"name": "receive_messages",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "akn-tenant-id",
-								"value": "akn-dev-local",
-								"type": "text"
-							},
-							{
-								"key": "akn-user-id",
-								"value": "gabrielec",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"connectionConfig\": \"amazon\",\r\n    \"count\":10\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{QUEUE_TESTER_URL}}queue-sqs/message",
-							"host": [
-								"{{QUEUE_TESTER_URL}}queue-sqs"
-							],
-							"path": [
-								"message"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "test",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "akn-tenant-id",
-								"value": "akn-dev-local",
-								"type": "text"
-							},
-							{
-								"key": "akn-user-id",
-								"value": "gabrielec",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"connectionConfig\": \"amazon-sqs-connection\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{QUEUE_TESTER_URL}}queue-sqs/test",
-							"host": [
-								"{{QUEUE_TESTER_URL}}queue-sqs"
-							],
-							"path": [
-								"test"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "publish",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "akn-tenant-id",
-								"value": "akn-dev-local",
-								"type": "text"
-							},
-							{
-								"key": "akn-user-id",
-								"value": "gabrielec",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"connectionConfig\": \"amazon-sqs-connection\",\r\n    \"messages\":[\r\n        {\r\n            \"id\":1,\r\n            \"name\":\"pippo\"\r\n        }\r\n    ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{QUEUE_TESTER_URL}}queue-sqs/publish",
-							"host": [
-								"{{QUEUE_TESTER_URL}}queue-sqs"
-							],
-							"path": [
-								"publish"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ack_messages",
+					"name": "schema",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"connectionConfig\": \"amazon-sqs-connection\",\r\n    \"messages\": [\r\n        {\r\n            \"MessageId\": \"2d0d9e72-c058-4c84-b4ce-4c719b583737\",\r\n            \"ReceiptHandle\": \"AQEBXForiav11zSyO+/GqhZPaMvvzZLsH8SA02O69kl3Qka+92Xx4tGxMwD4iHmR6kzDRMMQDWLqgfan9KYrmQDgVzO2/X0qM4nxTsxDqxnOx6cWEA66+VklcTCWZFtYl4JnkayqM2oJ4ptwGYD2kc3GAFfieLmV4/2TKvvM32Y+ppH4muf6JbXsBVVfBaI5OlTmBdbbZn+JwtXyfF6APdx7x0K58Z4oEYHO29V/Y1es17nXVddW6gQQfMlbTIpo/4xz/8/9MngBpblzsJhdhXydX6tPizP7HO49APCmjuw7SRNV/dv94evLPpmIgw3DIvDu2GJcCZOaaS1JMD4A63tO9U5pf1Mc9nEx1yZAThTo4DNevb0GlHwUeqZyp5OQL0vLlfZaHn7UaGi7svy7Kt62Vw==\",\r\n            \"MD5OfBody\": \"01d4cd07c99b5781ea44bf54b8f57826\",\r\n            \"Body\": \"{\\\"envelope\\\": {\\\"marketCode\\\": \\\"CZ\\\", \\\"domain\\\": \\\"Party\\\", \\\"channelId\\\": \\\"ASLF\\\", \\\"businessProcess\\\": \\\"createandupdate\\\", \\\"senderSystem\\\": \\\"OMS\\\"}, \\\"payload\\\": [{\\\"marketCode\\\": \\\"CZ\\\", \\\"representativeId\\\": \\\"CZ00000004\\\", \\\"campaign\\\": \\\"202507\\\", \\\"representativeType\\\": \\\"representative\\\", \\\"structureZone\\\": \\\"CZ012\\\", \\\"structureDivision\\\": \\\"CZ01\\\", \\\"salesLeaderId\\\": \\\"CZ07935590\\\", \\\"fullName\\\": \\\"Marco\\\", \\\"transDate\\\": \\\"2025-07-17T12:14:16\\\", \\\"emailAddress\\\": \\\"marco@gmail.com\\\", \\\"phoneNumber\\\": \\\"+431224788744\\\", \\\"addressLine1\\\": \\\"address1,address2,address3\\\"}]}\"\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"code\": \"title\",\r\n    \"payload\":{\r\n            \"envelope\": {\r\n                \"marketCode\": \"CZ\",\r\n                \"domain\": \"Party\",\r\n                \"channelId\": \"ASLF\",\r\n                \"businessProcess\": \"createandupdate\",\r\n                \"senderSystem\": \"OMS\"\r\n            },\r\n            \"payload\": [\r\n                {\r\n                    \"marketCode\": \"CZ\",\r\n                    \"representativeId\": \"CZ04068288\",\r\n                    \"campaign\": \"202507\",\r\n                    \"representativeType\": \"representative\",\r\n                    \"structureZone\": \"CZ012\",\r\n                    \"structureDivision\": \"CZ01\",\r\n                    \"salesLeaderId\": \"CZ07935590\",\r\n                    \"fullName\": \"name of rep\",\r\n                    \"transDate\": \"2025-07-17T12:14:16\",\r\n                    \"emailAddress\": \"azulejandra98@gmail.com\",\r\n                    \"phoneNumber\": \"+431224788744\",\r\n                    \"addressLine1\": \" all address in one for ur info\"\r\n                }\r\n            ]\r\n        }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -750,54 +921,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{QUEUE_TESTER_URL}}queue-sqs/ack",
+							"raw": "{{QUEUE_TESTER_URL}}json_utils/schema",
 							"host": [
-								"{{QUEUE_TESTER_URL}}queue-sqs"
+								"{{QUEUE_TESTER_URL}}json_utils"
 							],
 							"path": [
-								"ack"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "broker",
-			"item": [
-				{
-					"name": "create queue",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "akn-tenant-id",
-								"value": "akn-dev-local",
-								"type": "text"
-							},
-							{
-								"key": "akn-user-id",
-								"value": "gabrielec",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"connectionConfig\": \"elasticmq\",\r\n    \"queue\":{\r\n        \"name\":\"test-queue-3\"\r\n    }\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{QUEUE_TESTER_URL}}brokers/queue",
-							"host": [
-								"{{QUEUE_TESTER_URL}}brokers"
-							],
-							"path": [
-								"queue"
+								"schema"
 							]
 						}
 					},
@@ -826,7 +955,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"registration_with_duplicate_scenario\",\r\n  \"description\": \"Crea 6 representative di cui uno duplicato\",\r\n  \"connectionConfig\": \"amazon-sqs-connection\",\r\n  \"steps\": [\r\n    {\r\n      \"stepType\": \"data-from-server\",\r\n      \"description\": \"aggiungo i representative\",\r\n      \"data_name\": \"registration_with_duplication_data\",\r\n      \"operation\": \"publish\"\r\n    }\r\n  ]\r\n}"
+					"raw": ""
 				},
 				"url": {
 					"raw": "{{QUEUE_TESTER_URL}}logs",

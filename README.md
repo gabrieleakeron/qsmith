@@ -13,8 +13,10 @@
     - deactivate ### DISATTIVAZIONE VENV
 
 ### RUN LOCALE
-    - venv\Scripts\activate ### ATTIVAZIONE VENV
-    - python -m fastapi dev  ### LANCIO APP (per usare questo comando da bash serve installare fastapi cli, non l'ho inserita nei requirements)
+    1. ATTIVAZIONE VENV 
+        - venv\Scripts\activate 
+    2. AVVIO SERVER 
+        - python -m fastapi dev --port 9082  
 
 ### UPDATE LIBRARY
     - pip compile --upgrade requirements.in

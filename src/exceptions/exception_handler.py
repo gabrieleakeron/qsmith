@@ -1,9 +1,9 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from exceptions.app_exception import AppException
+from exceptions.app_exception import QsmithAppException
 
 
-async def app_exception_handler(request: Request, exc: AppException):
+async def app_exception_handler(request: Request, exc: QsmithAppException):
 
     print(exc)
 
