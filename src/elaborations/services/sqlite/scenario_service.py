@@ -12,19 +12,11 @@ def load_scenario(_id:str)-> Scenario:
     if not json_payload:
         raise ValueError(f"Scenario '{_id}' not found")
 
-    steps: list[StepDto] = []
-
-    if isinstance(json_payload.payload, list):
-        for step in json_payload.payload:
-            steps.append(StepDto.model_validate(step))
-    else:
-        steps.append(StepDto.model_validate(json_payload.payload))
-
     scenario = Scenario(
         id=json_payload.id,
         code=json_payload.code,
         description=json_payload.description,
-        steps=steps
+        steps=json_payload.payload.get("steps", [])
     )
 
     return scenario

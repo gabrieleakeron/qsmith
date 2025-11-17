@@ -16,9 +16,9 @@ from json_utils.services.sqlite.json_files_service import JsonFilesService
 router = APIRouter(prefix="/database")
 
 @router.post("/connection")
-async def add_database_connection_api(database_dto: CreateJsonPayloadDto):
-    JsonFilesService.insert(JsonType.DATABASE_CONNECTION,database_dto)
-    return {"message": "Database connection added"}
+async def insert_database_connection_api(database_dto: CreateJsonPayloadDto):
+    _id = JsonFilesService.insert(JsonType.DATABASE_CONNECTION, database_dto)
+    return {"id":_id,"message": "Database connection added"}
 
 @router.put("/connection")
 async def update_database_connection_api(database_dto: UpdateJsonPayloadDto):
@@ -33,26 +33,26 @@ async def get_database_connections_api():
 async def get_database_connection_api(_id:str):
     json_dto: JsonPayload = JsonFilesService.get_by_id(_id)
     if not json_dto:
-        raise  QsmithAppException(f"No database connection found with id [ {_id} ]")
+        raise QsmithAppException(f"No database connection found with id [ {_id} ]")
     return json_dto
 
 @router.get("/connection/{_id}/test")
 async def test_database_connection_api(_id: str):
     connection = load_database_connection(_id)
     if not connection:
-        raise  QsmithAppException(f"No database connection found with id [ {_id} ]")
+        raise QsmithAppException(f"No database connection found with id [ {_id} ]")
 
     engine = create_sqlalchemy_engine(connection)
 
     if DatabaseTableReader.test_connection(engine):
         return {"message": "Connection successful"}
 
-    raise  QsmithAppException("Connection failed")
+    return {"message": "Connection failed"}
 
 @router.delete("/connection/{_id}")
 async def delete_database_connection_api(_id: str):
     json_dto: JsonPayload = JsonFilesService.get_by_id(_id)
     count = JsonFilesService.delete_by_id(_id)
     if count == 0:
-        raise  QsmithAppException(f"No database connection found with id [ {_id} ]")
+        raise QsmithAppException(f"No database connection found with id [ {_id} ]")
     return {"message": f"Database connection with code [ {json_dto.code} ] deleted successfully"}

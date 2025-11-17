@@ -9,13 +9,13 @@ from elaborations.models.operations import SaveToExternalDBOperationDto
 from elaborations.models.scenario import Scenario
 from elaborations.models.steps import StepDto
 from database.services.sqlite.database_connection_service import load_database_connection
-from elaborations.services.operations.operation_executor import OperationExecutor
+from elaborations.services.operations.operation_executor import OperationExecutor, ExecutionResultDto
 
 
 class SaveToExternalDbOperationExecutor(OperationExecutor):
 
-    def execute(self, scenario:Scenario, step:StepDto, operation: SaveToExternalDBOperationDto, data:list[dict])->dict[str, str]:
-        connection:DatabaseConnectionConfigTypes = load_database_connection(operation.connectionConfig)
+    def execute(self, scenario:Scenario, step:StepDto, operation: SaveToExternalDBOperationDto, data:list[dict])->ExecutionResultDto:
+        connection:DatabaseConnectionConfigTypes = load_database_connection(operation.connection_id)
 
         engine = create_sqlalchemy_engine(connection)
         DatabaseTableManager.drop_table(engine, operation.table_name)
@@ -31,11 +31,18 @@ class SaveToExternalDbOperationExecutor(OperationExecutor):
         rows = []
         for index, item in enumerate(data):
             rows.append({
-                "oid": index,
+                "oid": str(index),
                 "message_payload": json.dumps(item),
                 "occurred_at": datetime.now()
             })
 
         DatabaseTableWriter.insert_rows(engine, operation.table_name, rows)
 
-        return {"message": f"Created {len(rows)} rows in {operation.table_name} table"}
+        message = f"Created {len(rows)} rows in {operation.table_name} table"
+
+        self.log(operation,message )
+
+        return ExecutionResultDto(
+            data=data,
+            result=[{"message": message}]
+        )

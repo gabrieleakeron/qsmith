@@ -44,9 +44,11 @@ def init_db():
         cx.execute("""
             CREATE TABLE IF NOT EXISTS logs(
               id TEXT PRIMARY KEY,
-              l_level TEXT,
-              l_type TEXT,
+              level TEXT,
+              subject_type TEXT,
+              subject TEXT,
               message TEXT,
-              created_date DATETIME DEFAULT CURRENT_TIMESTAMP
+              payload TEXT,
+              created_at INTEGER 
             )
         """)

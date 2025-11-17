@@ -10,8 +10,8 @@ router = APIRouter(prefix="/broker")
 
 @router.post("/connection")
 async def insert_broker_connection_api(dto: CreateJsonPayloadDto):
-    JsonFilesService.insert(JsonType.BROKER_CONNECTION, dto)
-    return {"message": f"Broker connection [ {dto.code} ] added"}
+    _id = JsonFilesService.insert(JsonType.BROKER_CONNECTION, dto)
+    return {"id":_id, "message": f"Broker connection [ {dto.code} ] added"}
 
 @router.put("/connection")
 async def update_broker_connection_api(dto: UpdateJsonPayloadDto):

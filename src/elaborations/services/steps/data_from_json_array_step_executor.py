@@ -7,5 +7,6 @@ from elaborations.services.steps.step_executor import StepExecutor
 
 class DataFromJsonArrayStepExecutor(StepExecutor):
     def execute(self, scenario:Scenario, step: DataFromJsonArrayStepDto) -> list[dict[str,str]]:
-        json_array = load_json_array(step.data_name)
+        json_array = load_json_array(step.json_array_id)
+        self.log(step, f"Try to export {len(json_array)}")
         return execute_operations(scenario, step, step.operations, json_array).result

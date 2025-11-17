@@ -33,7 +33,7 @@ async def insert_queue_api(broker_id:str, c: CreateQueueDto):
         connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
         service = BrokerConnectionServiceFactory.get_service(connection_config)
         result= service.create_queue(connection_config,c)
-        QueueService.insert(QueueDto(
+        _id = QueueService.insert(QueueDto(
             broker_id=broker_id,
             code=c.code,
             url=result.get("queueUrl"),
@@ -46,7 +46,7 @@ async def insert_queue_api(broker_id:str, c: CreateQueueDto):
     except Exception as e:
         return {"error": str(e)}
 
-    return result
+    return {"id": _id, "message": f"Queue '{c.code}' created successfully"}
 
 @router.delete("/{broker_id}/queue/{queue_id}")
 async def delete_queue_api(broker_id:str,queue_id:str):

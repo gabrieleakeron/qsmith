@@ -7,17 +7,11 @@ class DatabaseTableManager:
                      table_name: str,
                      columns: dict[str, str],
                      primary_key: str | None = None):
-
-
-
         with engine.connect() as connection:
-
             columns_str = ', '.join([f"{col} {dtype}" for col, dtype in columns.items()])
-
             pk_str = f", PRIMARY KEY ({primary_key})" if primary_key else ""
-
-            connection.execute(f"CREATE TABLE {table_name} ({columns_str}{pk_str})")
-
+            create_table = text(f"CREATE TABLE {table_name} ({columns_str}{pk_str})")
+            connection.execute(create_table)
             connection.commit()
 
     @classmethod

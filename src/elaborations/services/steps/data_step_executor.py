@@ -6,4 +6,5 @@ from elaborations.services.steps.step_executor import StepExecutor
 
 class DataStepExecutor(StepExecutor):
     def execute(self, scenario:Scenario, step: DataStepDTO) -> list[dict[str, str]]:
-        return execute_operations(scenario,step, step.operations, step.data).result
+        self.log(step, f"Try to export {len(step.data)}")
+        return execute_operations(scenario, step, step.operations, step.data).result

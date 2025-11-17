@@ -1,7 +1,9 @@
 from elaborations.models.scenario import Scenario
 from elaborations.models.steps import DataStepDTO, SleepStepDto, DataFromJsonArrayStepDto, \
-    StepDto, StepDtoTypes
+    StepDto, StepDtoTypes, DataFromDbStepDto, DataFromQueueStepDto
+from elaborations.services.steps.data_from_db_step_executor import DataFromDbStepExecutor
 from elaborations.services.steps.data_from_json_array_step_executor import DataFromJsonArrayStepExecutor
+from elaborations.services.steps.data_from_queue_step_executor import DataFromQueueStepExecutor
 from elaborations.services.steps.data_step_executor import DataStepExecutor
 from elaborations.services.steps.sleep_step_executor import SleepStepExecutor
 from elaborations.services.steps.step_executor import StepExecutor
@@ -9,7 +11,9 @@ from elaborations.services.steps.step_executor import StepExecutor
 _CONNECTOR_MAPPING: dict[type[StepDto], type[StepExecutor]] = {
     SleepStepDto: SleepStepExecutor,
     DataStepDTO: DataStepExecutor,
-    DataFromJsonArrayStepDto:DataFromJsonArrayStepExecutor
+    DataFromJsonArrayStepDto:DataFromJsonArrayStepExecutor,
+    DataFromDbStepDto:DataFromDbStepExecutor,
+    DataFromQueueStepDto:DataFromQueueStepExecutor
 }
 
 def execute_step(scenario:Scenario, step:StepDtoTypes)->list[dict[str,str]]:

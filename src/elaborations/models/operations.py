@@ -5,15 +5,14 @@ class OperationDto(BaseModel):
 
 class PublishOperationDto(OperationDto):
     operationType: str = "publish"
-    connectionConfig: str
-    queue:str
+    queue_id:str
 
 class SaveInternalDBOperationDto(OperationDto):
     operationType: str = "save-internal-db"
 
 class SaveToExternalDBOperationDto(OperationDto):
     operationType: str = "save-external-db"
-    connectionConfig: str
+    connection_id: str
     table_name: str
 
 OperationTypes = PublishOperationDto | SaveInternalDBOperationDto | SaveToExternalDBOperationDto

@@ -1,10 +1,18 @@
+from enum import Enum
+
 from pydantic import BaseModel
 
 from elaborations.models.operations import OperationTypes
 
+class OnFailure(Enum):
+    CONTINUE = "CONTINUE"
+    ABORT = "ABORT"
+
 class StepDto(BaseModel):
     stepType: str
+    code: str
     description: str
+    on_failure: OnFailure = OnFailure.ABORT
 
 class SleepStepDto(StepDto):
     stepType: str = "sleep"
@@ -12,7 +20,7 @@ class SleepStepDto(StepDto):
 
 class DataFromJsonArrayStepDto(StepDto):
     stepType: str = "data-from-json-array"
-    data_name: str
+    json_array_id: str
     operations: list[OperationTypes]
 
 class DataStepDTO(StepDto):
@@ -22,7 +30,7 @@ class DataStepDTO(StepDto):
 
 class DataFromDbStepDto(StepDto):
     stepType: str = "data-from-db"
-    connectionConfig: str
+    connection_id: str
     table_name: str
     order_by: list[str]
     page_size: int = 100
@@ -30,11 +38,10 @@ class DataFromDbStepDto(StepDto):
 
 class DataFromQueueStepDto(StepDto):
     stepType: str = "data-from-queue"
-    connectionConfig: str
     queue_id: str
     retry: int = 3
     wait_time_seconds: int = 20
     max_messages: int = 1000
     operations: list[OperationTypes]
 
-StepDtoTypes = StepDto | SleepStepDto | DataStepDTO | DataFromJsonArrayStepDto | DataFromQueueStepDto | DataFromDbStepDto
+StepDtoTypes = SleepStepDto | DataStepDTO | DataFromJsonArrayStepDto | DataFromQueueStepDto | DataFromDbStepDto

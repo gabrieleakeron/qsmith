@@ -2,6 +2,7 @@ import json
 
 from fastapi import APIRouter
 
+from exceptions.app_exception import QsmithAppException
 from json_utils.models.create_json_payload_dto import CreateJsonPayloadDto
 from json_utils.models.json_payload import JsonPayload
 from json_utils.models.json_type import JsonType
@@ -14,8 +15,8 @@ router = APIRouter(prefix="/elaborations")
 
 @router.post("/scenario")
 async def insert_scenario_api(scenario_dto:CreateJsonPayloadDto):
-    JsonFilesService.insert(JsonType.SCENARIO,scenario_dto)
-    return {"message": "Scenario added"}
+    _id = JsonFilesService.insert(JsonType.SCENARIO, scenario_dto)
+    return {"id":_id, "message": "Scenario added"}
 
 @router.put("/scenario")
 async def update_scenario_api(scenario_dto:UpdateJsonPayloadDto):
@@ -23,19 +24,21 @@ async def update_scenario_api(scenario_dto:UpdateJsonPayloadDto):
     return {"message": "Scenario updated"}
 
 @router.get("/scenario")
-async def find_all_scenarios_api()->list[str]:
-    return JsonFilesService.get_codes_by_type(JsonType.SCENARIO)
+async def find_all_scenarios_api():
+    return JsonFilesService.get_all_by_type(JsonType.SCENARIO)
 
 @router.get("/scenario/{_id}")
 async def find_scenario_api(_id:str):
     json_dto: JsonPayload = JsonFilesService.get_by_id(_id)
     if not json_dto:
-        return {"message": f"No scenario found with id [ {_id} ]"}, 400
-    return json.dumps(json_dto.payload)
+        raise QsmithAppException(f"No scenario found with id [ {_id} ]")
+    return json_dto
 
 @router.delete("/scenario/{_id}")
 async def delete_scenario_api(_id: str):
     result = JsonFilesService.delete_by_id(_id)
+    if result == 0:
+        raise QsmithAppException(f"No scenario found with id [ {_id} ]")
     return {"message": f"{result} scenario(s) deleted"}
 
 @router.get("/scenario/{_id}/execute")

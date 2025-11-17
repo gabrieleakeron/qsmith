@@ -1,5 +1,6 @@
 from brokers.models.connections.broker_connection_config_types import BrokerConnectionConfigTypes
 from brokers.services.sqllite.broker_connection_service import load_broker_connection
+from brokers.services.sqllite.queue_service import QueueService
 from elaborations.models.scenario import Scenario
 from elaborations.models.steps import DataFromQueueStepDto
 from brokers.services.connections.queue.queue_connection_service_factory import QueueConnectionServiceFactory
@@ -12,7 +13,8 @@ class DataFromQueueStepExecutor(StepExecutor):
 
     def execute(self, scenario:Scenario, step: DataFromQueueStepDto) -> list[dict[str, str]]:
 
-        broker_connection:BrokerConnectionConfigTypes = load_broker_connection(step.connectionConfig)
+        queue = QueueService.get_by_id(step.queue_id)
+        broker_connection:BrokerConnectionConfigTypes = load_broker_connection(queue.broker_id)
         service = QueueConnectionServiceFactory.get_service(broker_connection)
 
         retry = step.retry
@@ -33,6 +35,8 @@ class DataFromQueueStepExecutor(StepExecutor):
             all_msgs.extend(msgs)
 
             service.ack_messages(broker_connection, queue_id=step.queue_id, messages=msgs)
+
+        self.log(step, f"Try to export {len(all_msgs)} messages read from queue '{queue.code}'")
 
         return execute_operations(scenario, step, step.operations, all_msgs).result
 

@@ -9,6 +9,6 @@ class DatabaseTableWriter:
                 columns = ', '.join(row.keys())
                 placeholders = ', '.join([f":{key}" for key in row.keys()])
                 sql = text(f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})")
-                connection.execute(sql, **row)
+                connection.execute(sql,row)
 
             connection.commit()

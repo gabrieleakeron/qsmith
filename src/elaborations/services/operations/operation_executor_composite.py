@@ -17,7 +17,8 @@ def execute_operations(scenario:Scenario, step:StepDtoTypes, operations:list[Ope
     execution_result = ExecutionResultDto(data=data, result=[])
 
     for op in operations:
-        execution_result.extend(execute_operation(scenario, step, op, data))
+        new_execution_result = execute_operation(scenario, step, op, execution_result.data)
+        execution_result.extend(new_execution_result)
 
     return execution_result
 
