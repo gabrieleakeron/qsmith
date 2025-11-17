@@ -1,31 +1,5 @@
-networks:
-  net:
-    name: qsmith-network
-
+version: '3.8'
 services:
-
-  appsmith:
-    image: index.docker.io/appsmith/appsmith-ce
-    container_name: appsmith
-    ports:
-      - "80:80"
-      - "443:443"
-    networks:
-      - net
-    volumes:
-      - ./stacks:/appsmith-stacks
-
-  elasticmq:
-    image: softwaremill/elasticmq-native
-    container_name: elasticmq
-    ports:
-      - "9324:9324"
-      - "9325:9325"
-    networks:
-      - net
-    volumes:
-      - ./elasticmq.conf:/opt/elasticmq.conf
-
   qsmith:
     build:
       context: .
@@ -34,12 +8,10 @@ services:
     container_name: qsmith
     working_dir: /app
     volumes:
-      - ./src:/app
-      - ./data:/app/data
-      - ./requirements.txt:/app/requirements.txt
+      - ./app:/qsmith/app
+      - ./alembic:/qsmith/alembic
+      - ./.env:/qsmith/.env
     ports:
       - "9082:9082"
-    networks:
-      - net
     environment:
       - PYTHONPATH=/app
