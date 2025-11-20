@@ -1,0 +1,3 @@
+from brokers.models.connections.amazon.broker_amazon_connection_config import BrokerAmazonConnectionConfig
+
+BrokerConnectionConfigTypes = BrokerAmazonConnectionConfig

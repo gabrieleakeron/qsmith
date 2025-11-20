@@ -1,0 +1,3 @@
+from brokers.models.connections.amazon.sqs_amazon_connection_config import SQSAmazonConnectionConfig
+
+QueueConnectionConfigTypes = SQSAmazonConnectionConfig
