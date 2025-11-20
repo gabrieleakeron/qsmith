@@ -1,0 +1,8 @@
+from enum import Enum
+
+
+class LogSubjectType(str,Enum):
+    SCENARIO_EXECUTION = "SCENARIO_EXECUTION",
+    STEP_EXECUTION = "STEP_EXECUTION",
+    OPERATION_EXECUTION = "OPERATION_EXECUTION",
+    SERVICE = "SERVICE"
