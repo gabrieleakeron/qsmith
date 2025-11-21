@@ -15,7 +15,7 @@ from logs.services.alembic.log_service import LogService
 
 def log(scenario_id:str, message:str, level:LogLevel=LogLevel.INFO, payload:dict|list[dict]=None):
     with managed_session() as session:
-        LogService.log(session,LogEntity(subject_type=LogSubjectType.SCENARIO_EXECUTION,
+        LogService().log(session,LogEntity(subject_type=LogSubjectType.SCENARIO_EXECUTION,
                           subject=scenario_id,
                           message=message,
                           level=level,
@@ -36,7 +36,7 @@ class ScenarioExecutorThread(threading.Thread):
         with managed_session() as session:
             log(self.scenario.id, message=f"Starting execution of scenario '{self.scenario.code}'")
 
-            scenario_steps:list[ScenarioStepEntity] = ScenarioStepService.get_all_by_scenario(session, self.scenario.id)
+            scenario_steps:list[ScenarioStepEntity] = ScenarioStepService().get_all_by_scenario_id(session, self.scenario.id)
 
             results = []
             total_steps = len(scenario_steps)

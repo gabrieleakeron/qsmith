@@ -15,7 +15,7 @@ class StepExecutor(ABC):
     @classmethod
     def log(cls, step_id:str, message: str, payload: dict | list[dict] = None, level: LogLevel = LogLevel.INFO):
         with managed_session() as session:
-            LogService.log(session,LogEntity(subject_type=LogSubjectType.STEP_EXECUTION,
+            LogService().log(session,LogEntity(subject_type=LogSubjectType.STEP_EXECUTION,
                               subject=step_id,
                               message=message,
                               payload=payload,
@@ -30,7 +30,7 @@ class StepExecutor(ABC):
     @classmethod
     def find_all_operations(cls, step_id):
         with managed_session() as session:
-            step_operations = StepOperationService.get_all_by_step(session, step_id)
+            step_operations = StepOperationService().get_all_by_step(session, step_id)
             operation_ids = [op.id for op in step_operations]
         return operation_ids
 

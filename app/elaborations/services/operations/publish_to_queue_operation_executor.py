@@ -1,3 +1,4 @@
+from _alembic.services.session_context_manager import managed_session
 from brokers.models.connections.broker_connection_config_types import BrokerConnectionConfigTypes
 from brokers.services.alembic.broker_connection_service import load_broker_connection
 from brokers.services.alembic.queue_service import QueueService
@@ -8,7 +9,8 @@ from elaborations.services.operations.operation_executor import OperationExecuto
 
 class PublishToQueueOperationExecutor(OperationExecutor):
     def execute(self, operation_id:str, cfg: PublishConfigurationOperationDto, data:list[dict])->ExecutionResultDto:
-        queue = QueueService.get_by_id(cfg.queue_id)
+        with managed_session() as session:
+            queue = QueueService().get_by_id(session,cfg.queue_id)
         connection_config: BrokerConnectionConfigTypes = load_broker_connection(queue.broker_id)
         service = QueueConnectionServiceFactory().get_service(connection_config)
         messages = service.publish_messages(connection_config, cfg.queue_id, data)

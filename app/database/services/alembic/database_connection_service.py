@@ -13,7 +13,7 @@ _CONNECTION_MAPPING:dict[str, type[DatabaseConnectionConfigTypes]] = {
 def load_database_connection(_id: str)->DatabaseConnectionConfigTypes:
 
     with managed_session() as session:
-        json_payload_entity: JsonPayloadEntity = JsonFilesService.get_by_id(session, _id)
+        json_payload_entity: JsonPayloadEntity = JsonFilesService().get_by_id(session, _id)
 
     if not json_payload_entity:
         raise ValueError(f"Database connection '{_id}' not found")

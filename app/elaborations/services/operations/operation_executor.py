@@ -22,7 +22,7 @@ class OperationExecutor(ABC):
     @classmethod
     def log(cls,operation_id:str,message: str, payload: dict | list[dict] = None, level: LogLevel = LogLevel.INFO):
         with managed_session() as session:
-            LogService.log(session,LogEntity(subject_type=LogSubjectType.OPERATION_EXECUTION,
+            LogService().log(session,LogEntity(subject_type=LogSubjectType.OPERATION_EXECUTION,
                               subject=operation_id,
                               message=message,
                               payload=payload,

@@ -27,7 +27,7 @@ def execute_step(step_id:str)->list[dict[str,str]]:
         if not step:
             raise QsmithAppException(f"Step with id '{step_id}' not found")
 
-        cfg = ConfigurationStepDtoTypes.model_validate(json.load(step.configuration_json))
+        cfg = ConfigurationStepDtoTypes.model_validate(step.configuration_json)
 
         clazz = _EXECUTOR_MAPPING.get(cfg)
         if clazz is None:

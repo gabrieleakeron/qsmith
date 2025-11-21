@@ -1,5 +1,6 @@
 import time
 
+from _alembic.services.session_context_manager import managed_session
 from brokers.models.connections.broker_connection_config_types import BrokerConnectionConfigTypes
 from brokers.services.connections.queue.queue_connection_service_factory import QueueConnectionServiceFactory
 from brokers.services.alembic.broker_connection_service import load_broker_connection
@@ -12,8 +13,8 @@ from elaborations.services.steps.step_executor import StepExecutor
 class DataFromQueueStepExecutor(StepExecutor):
 
     def execute(self, step:StepEntity, cfg: DataFromQueueConfigurationStepDto) -> list[dict[str, str]]:
-
-        queue = QueueService.get_by_id(step.queue_id)
+        with managed_session() as session:
+            queue = QueueService().get_by_id(session, step.queue_id)
         broker_connection:BrokerConnectionConfigTypes = load_broker_connection(queue.broker_id)
         service = QueueConnectionServiceFactory.get_service(broker_connection)
 

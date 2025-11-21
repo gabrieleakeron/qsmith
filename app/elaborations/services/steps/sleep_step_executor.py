@@ -1,7 +1,7 @@
 import time
 
-from elaborations.models.dtos.configuration_step_dtos import SleepConfigurationStepDto
 from _alembic.models.step_entity import StepEntity
+from elaborations.models.dtos.configuration_step_dtos import SleepConfigurationStepDto
 from elaborations.services.steps.step_executor import StepExecutor
 
 
