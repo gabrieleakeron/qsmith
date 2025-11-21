@@ -9,5 +9,9 @@ def managed_session():
     try:
         with session.begin():
             yield session
+    except Exception:
+        session.rollback()
+        raise
     finally:
+        session.commit()
         session.close()

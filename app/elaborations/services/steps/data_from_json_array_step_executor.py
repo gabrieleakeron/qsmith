@@ -1,4 +1,4 @@
-from data_sources.services.sqlite.data_source_service import load_json_array
+from data_sources.services.alembic.data_source_service import load_json_array
 from elaborations.models.dtos.configuration_step_dtos import DataFromJsonArrayConfigurationStepDto
 from _alembic.models.step_entity import StepEntity
 from elaborations.services.steps.step_executor import StepExecutor

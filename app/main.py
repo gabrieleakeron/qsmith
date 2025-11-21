@@ -7,10 +7,6 @@ from alembic_runner import run_alembic_migrations
 from elasticmq.elasticmq_config import init_elasticmq
 from exceptions.app_exception import QsmithAppException
 from exceptions.exception_handler import app_exception_handler, generic_exception_handler
-
-load_dotenv()
-init_elasticmq()
-
 from brokers.api.broker_api import router as brokers_connection_router
 from brokers.api.broker_queues_api import router as brokers_router
 from data_sources.api.json_array_data_source_api import router as json_array_router
@@ -23,6 +19,7 @@ from logs.api.logs_api import router as logs_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    load_dotenv()
 
     print("Starting Alembic migrations...")
     try:
@@ -31,6 +28,8 @@ async def lifespan(app: FastAPI):
         print(f"Error during Alembic migrations: {str(e)}")
         raise e
     print("Alembic migrations completed.")
+
+    init_elasticmq()
 
     try:
         yield

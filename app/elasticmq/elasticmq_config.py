@@ -1,3 +1,4 @@
+from _alembic.services.session_context_manager import managed_session
 from brokers.models.connections.broker_connection_config_types import BrokerConnectionConfigTypes
 from brokers.services.connections.broker_connection_service_factory import BrokerConnectionServiceFactory
 
@@ -8,11 +9,11 @@ from json_utils.services.alembic.json_files_service import JsonFilesService
 
 
 def init_elasticmq():
-    brokers : list[JsonPayloadEntity] = JsonFilesService.get_all_by_type(JsonType.BROKER_CONNECTION)
-    for b in brokers:
-        queues = QueueService.get_all_by_broker(b.id)
-        brokers_connection:BrokerConnectionConfigTypes = BrokerConnectionConfigTypes.model_validate(b.payload)
-        service = BrokerConnectionServiceFactory.get_service(brokers_connection)
-        for q in queues:
-            service.create_queue(brokers_connection,q)
-
+    with managed_session() as session:
+        brokers : list[JsonPayloadEntity] = JsonFilesService.get_all_by_type(session,JsonType.BROKER_CONNECTION)
+        for b in brokers:
+            queues = QueueService.get_all_by_broker_id(session, b.id)
+            brokers_connection: BrokerConnectionConfigTypes = BrokerConnectionConfigTypes.model_validate(b.payload)
+            service = BrokerConnectionServiceFactory.get_service(brokers_connection)
+            for q in queues:
+                service.create_queue(brokers_connection, q)

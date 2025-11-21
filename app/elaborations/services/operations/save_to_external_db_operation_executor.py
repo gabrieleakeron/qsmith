@@ -5,7 +5,7 @@ from database.models.database_connection_config_types import DatabaseConnectionC
 from database.services.sqlalchemy.database_table_manager import DatabaseTableManager
 from database.services.sqlalchemy.database_table_writer import DatabaseTableWriter
 from database.services.sqlalchemy.engine_factory.sqlalchemy_engine_factory_composite import create_sqlalchemy_engine
-from database.services.sqlite.database_connection_service import load_database_connection
+from database.services.alembic.database_connection_service import load_database_connection
 from elaborations.models.dtos.configuration_operation_dto import SaveToExternalDBConfigurationOperationDto
 from elaborations.services.operations.operation_executor import OperationExecutor, ExecutionResultDto
 

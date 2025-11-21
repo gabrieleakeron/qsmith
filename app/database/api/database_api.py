@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from _alembic.services.session_context_manager import managed_session
 from database.services.sqlalchemy.database_table_reader import DatabaseTableReader
 from database.services.sqlalchemy.engine_factory.sqlalchemy_engine_factory_composite import create_sqlalchemy_engine
-from database.services.sqlite.database_connection_service import load_database_connection
+from database.services.alembic.database_connection_service import load_database_connection
 from exceptions.app_exception import QsmithAppException
 from json_utils.models.dtos.create_json_payload_dto import CreateJsonPayloadDto
 from _alembic.models.json_payload_entity import JsonPayloadEntity

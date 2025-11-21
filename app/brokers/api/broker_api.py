@@ -25,14 +25,14 @@ async def insert_broker_connection_api(dto: CreateJsonPayloadDto):
 @router.put("/connection")
 async def update_broker_connection_api(dto: UpdateJsonPayloadDto):
     with managed_session() as session:
-        _id = JsonFilesService.update(session, JsonPayloadEntity(
-            id=dto.id,
+        entity = JsonFilesService.update(session,
+            dto.id,
             code=dto.code,
             description=dto.description,
             json_type=JsonType.BROKER_CONNECTION,
-            payload=json.dumps(dto.payload, ensure_ascii=True)
-        ))
-    return {"message": f"Broker connection [ {dto.code} ] updated"}
+            payload=json.dumps(dto.payload,ensure_ascii=True)
+        )
+    return {"message": f"Broker connection [ {entity.code} ] updated"}
 
 @router.get("/connection")
 async def find_all_broker_connections_api():

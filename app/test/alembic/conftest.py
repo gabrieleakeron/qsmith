@@ -17,15 +17,11 @@ def alembic_container():
     finally:
         container.stop()
 
-
 def replace_database_url(container):
-    name = container.dbname,
-    host = container.get_container_host_ip(),
-    port = int(container.get_exposed_port(5432)),
-    user = container.username,
-    password = container.password,
+    name = container.dbname
+    host = container.get_container_host_ip()
+    port = int(container.get_exposed_port(5432))
+    user = container.username
+    password = container.password
     database_url = f"postgresql://{user}:{password}@{host}:{port}/{name}"
     os.environ["DATABASE_URL"] = database_url
-
-
-
