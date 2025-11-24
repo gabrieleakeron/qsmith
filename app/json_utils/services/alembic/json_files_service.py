@@ -1,6 +1,3 @@
-from typing import Any
-
-from sqlalchemy import text
 from sqlalchemy.orm import Session, InstrumentedAttribute
 
 from _alembic.models.base_entity import BaseIdEntity

@@ -1,4 +1,5 @@
 import json
+import os
 from typing import Any
 
 import boto3
@@ -7,11 +8,12 @@ from botocore.exceptions import ClientError
 
 from _alembic.models.queue_entity import QueueEntity
 from _alembic.services.session_context_manager import managed_session
-from brokers.models.connections.amazon.broker_amazon_connection_config import BrokerAmazonConnectionConfig
+from brokers.models.connections.elastiqmq.broker_elasticmq_connection_config import BrokerElasticmqConnectionConfig
 from brokers.models.dto.queue_configuration_dto import QueueConfigurationDto
-from brokers.services.connections.queue.queue_connection_service import QueueConnectionService
 from brokers.services.alembic.queue_service import QueueService
+from brokers.services.connections.queue.queue_connection_service import QueueConnectionService
 
+DOCKER_HOST_IP = "host.docker.internal"
 SHORT_VISIBILITY_TIMEOUT = 5
 DEFAULT_VISIBILITY_TIMEOUT = 30
 MAX_NUMBER_OF_MESSAGES = 10
@@ -20,15 +22,20 @@ WAIT_TIME_SECONDS = 20
 def extract_url_from_queue(queue_cfg_dto:QueueConfigurationDto) -> str:
     if not queue_cfg_dto:
         raise Exception(f"Queue {queue_cfg_dto} not found")
-    return queue_cfg_dto.url
 
-def client(config: BrokerAmazonConnectionConfig)->BaseClient:
+    if os.getenv("HOST_IP", DOCKER_HOST_IP)==DOCKER_HOST_IP:
+        return queue_cfg_dto.url.replace("localhost", DOCKER_HOST_IP)
+    else:
+        return queue_cfg_dto.url
+
+
+def client(config: BrokerElasticmqConnectionConfig)->BaseClient:
     return boto3.client(
         "sqs",
-        region_name=config.region,
+        region_name="region",
         endpoint_url=config.endpointUrl,
-        aws_access_key_id=config.accessKeyId,
-        aws_secret_access_key=config.secretsAccessKey,
+        aws_access_key_id="xxx",
+        aws_secret_access_key="yyy",
     )
 
 def test_connection(sqs,queue_url:str):
@@ -37,9 +44,9 @@ def test_connection(sqs,queue_url:str):
     except ClientError as e:
         raise Exception(f"Error accessing SQS queue: {e}")
 
-class AmazonSQSConnectionService(QueueConnectionService):
+class ElasticmqSQSConnectionService(QueueConnectionService):
 
-    def test_connection(self, config:BrokerAmazonConnectionConfig, queue_id:str) -> bool:
+    def test_connection(self, config:BrokerElasticmqConnectionConfig, queue_id:str) -> bool:
         sqs = client(config)
         with managed_session() as session:
             queue: QueueEntity = QueueService().get_by_id(session,queue_id)
@@ -49,7 +56,7 @@ class AmazonSQSConnectionService(QueueConnectionService):
         test_connection(sqs,queue_url)
         return True
 
-    def publish_messages(self, config:BrokerAmazonConnectionConfig, queue_id:str, messages:list[Any]) -> list[dict[str, Any]]:
+    def publish_messages(self, config:BrokerElasticmqConnectionConfig, queue_id:str, messages:list[Any]) -> list[dict[str, Any]]:
 
         sqs = client(config)
         with managed_session() as session:
@@ -84,7 +91,7 @@ class AmazonSQSConnectionService(QueueConnectionService):
 
         return results
 
-    def receive_messages(self, config:BrokerAmazonConnectionConfig, queue_id:str, max_messages: int = 10) -> list[Any]:
+    def receive_messages(self, config:BrokerElasticmqConnectionConfig, queue_id:str, max_messages: int = 10) -> list[Any]:
         sqs: BaseClient = client(config)
         with managed_session() as session:
             queue: QueueEntity = QueueService().get_by_id(session,queue_id)
@@ -114,7 +121,7 @@ class AmazonSQSConnectionService(QueueConnectionService):
 
         return all_msgs
 
-    def ack_messages(self, config:BrokerAmazonConnectionConfig, queue_id:str, messages: list[Any])-> list[dict]:
+    def ack_messages(self, config:BrokerElasticmqConnectionConfig, queue_id:str, messages: list[Any])-> list[dict]:
         sqs: BaseClient = client(config)
         with managed_session() as session:
             queue: QueueEntity = QueueService().get_by_id(session,queue_id)

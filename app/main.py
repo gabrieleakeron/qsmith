@@ -17,8 +17,7 @@ from elaborations.api.operations_api import router as operations_router
 from json_utils.api.json_utils_api import router as json_utils_router
 from logs.api.logs_api import router as logs_router
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+def load_environment():
     load_dotenv()
 
     print("Starting Alembic migrations...")
@@ -31,13 +30,9 @@ async def lifespan(app: FastAPI):
 
     init_elasticmq()
 
-    try:
-        yield
-    finally:
-        print("Shutting down application...")
+load_environment()
 
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 app.include_router(brokers_router)
 app.include_router(brokers_connection_router)

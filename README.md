@@ -21,6 +21,7 @@
     
     4. Installazione delle dipendenze 
     - pip install -r requirements.txt
+    - docker compose -f .\docker-compose-compile-requirements.yml run --rm compiler
 
 ### RUN LOCALE
     1. Assicurarsi di aver attivato il VENV 

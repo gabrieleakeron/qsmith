@@ -1,6 +1,7 @@
 from abc import abstractmethod
+from typing import Optional
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, InstrumentedAttribute
 
 from _alembic.models.base_id_entity_types import BaseIdEntityTypes
 from _alembic.services.update_entity import update_entity
@@ -27,20 +28,23 @@ class BaseIdEntityService:
         return [entity.id for entity in entities]
 
     def update(self, session: Session, _id: str, **kwargs) -> BaseIdEntityTypes | None:
-        db_entity = session.get(self.get_entity_class(), _id)
-
+        id_attr: InstrumentedAttribute = self.get_entity_class().id
+        db_entity: Optional[BaseIdEntityTypes] = (
+            session.query(self.get_entity_class()).filter(id_attr == _id).one_or_none()
+        )
         if not db_entity:
             return None
-
         update_entity(db_entity, **kwargs)
-
         session.flush()
-
         return db_entity
 
 
     def get_by_id(self, session: Session, _id: str) -> BaseIdEntityTypes | None:
-        return session.get(self.get_entity_class(), _id)
+        id_attr: InstrumentedAttribute = self.get_entity_class().id
+        db_entity: Optional[BaseIdEntityTypes] = (
+            session.query(self.get_entity_class()).filter(id_attr == _id).one_or_none()
+        )
+        return db_entity
 
     def get_all(self,session:Session)->list[BaseIdEntityTypes]:
         return session.query(self.get_entity_class()).all()

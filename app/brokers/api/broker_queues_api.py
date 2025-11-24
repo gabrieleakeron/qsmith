@@ -19,7 +19,7 @@ router = APIRouter(prefix="/broker")
 @router.get("/{broker_id}/queue")
 async def find_all_queues_api(broker_id:str)->list[dict]:
     with managed_session() as session:
-        queues: list[QueueEntity]= QueueService.get_all_by_broker_id(session,broker_id)
+        queues: list[QueueEntity]= QueueService().get_all_by_broker_id(session,broker_id)
     result: list[dict] = []
     for queue in queues:
         cfg = QueueConfigurationDto.model_validate(json.loads(queue.configuration_json))
@@ -39,7 +39,7 @@ async def find_all_queues_api(broker_id:str)->list[dict]:
 @router.get("/{broker_id}/queue/{queue_id}")
 async def find_queue_api(broker_id: str, queue_id: str):
     with managed_session() as session:
-        queue_entity: QueueEntity | None = QueueService.get_by_id(session, queue_id)
+        queue_entity: QueueEntity | None = QueueService().get_by_id(session, queue_id)
     if queue_entity is None:
         return {"error": f"Queue with name '{queue_id}' not found"}
     cfg = QueueConfigurationDto.model_validate(json.loads(queue_entity.configuration_json))
@@ -63,38 +63,38 @@ async def insert_queue_api(broker_id: str, c: CreateQueueDto):
         service = BrokerConnectionServiceFactory.get_service(connection_config)
         result = service.create_queue(connection_config, c)
         with managed_session() as session:
-            _id = QueueService.insert(session,QueueEntity(
-                broker_id=broker_id,
-                code=c.code,
-                url=result.get("queueUrl"),
-                fifoQueue=c.fifoQueue,
-                contentBasedDeduplication=c.contentBasedDeduplication,
-                defaultVisibilityTimeout=c.defaultVisibilityTimeout,
-                delay=c.delay,
-                receiveMessageWait=c.receiveMessageWait
-            ))
+            entity = QueueEntity()
+            entity.broker_id = broker_id
+            entity.code = c.code
+            entity.description = c.description
+            entity.configuration_json = {
+                "url": result["queue_url"],
+                "fifoQueue": c.fifoQueue,
+                "contentBasedDeduplication": c.contentBasedDeduplication,
+                "defaultVisibilityTimeout": c.defaultVisibilityTimeout,
+                "delay": c.delay,
+                "receiveMessageWait": c.receiveMessageWait
+            }
+            _id = QueueService().insert(session,entity)
+            return {"id": _id, "message": f"Queue '{c.code}' created successfully"}
     except Exception as e:
         return {"error": str(e)}
-
-    return {"id": _id, "message": f"Queue '{c.code}' created successfully"}
-
 
 @router.delete("/{broker_id}/queue/{queue_id}")
 async def delete_queue_api(broker_id: str, queue_id: str):
     try:
         with managed_session() as session:
-            queue: QueueEntity | None = QueueService.get_by_id(session,queue_id)
+            queue: QueueEntity | None = QueueService().get_by_id(session,queue_id)
             if queue is None:
                 return {"error": f"Queue with name '{queue_id}' not found"}
 
             connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
             service = BrokerConnectionServiceFactory.get_service(connection_config)
             result = service.delete_queue(connection_config, queue_dto.url)
-            QueueService.delete_by_id(session,queue_id)
+            QueueService().delete_by_id(session,queue_id)
+            return result
     except Exception as e:
         return {"error": f"Could not delete queue '{queue_id}': {str(e)}"}
-
-    return result
 
 
 @router.post("/{broker_id}/queue/{queue_id}/messages")
