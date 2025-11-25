@@ -45,8 +45,8 @@ class AmazonBrokerConnectionService(BrokerConnectionService):
 
         if q.fifoQueue:
             attributes["FifoQueue"] = "true"
-            if not q.name.endswith(".fifo"):
-                q.name += ".fifo"
+            if not q.code.endswith(".fifo"):
+                q.code += ".fifo"
             if q.contentBasedDeduplication:
                 attributes["ContentBasedDeduplication"] = "true"
 
