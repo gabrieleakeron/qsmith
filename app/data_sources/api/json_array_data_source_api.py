@@ -29,7 +29,7 @@ async def update_json_array_api(dto: UpdateJsonPayloadDto):
         _id = JsonFilesService().update(session, dto.id,
                                         code=dto.code,
                                         description=dto.description,
-                                        json_type=JsonType.JSON_ARRAY,
+                                        json_type=JsonType.JSON_ARRAY.value,
                                         payload=dto.payload
                                         )
         return {"message": f"Json array [ {dto.code} ] updated"}
@@ -67,8 +67,7 @@ async def find_json_array_api(_id: str):
 @router.delete("/json-array/{_id}")
 async def delete_json_array_api(_id: str):
     with managed_session() as session:
-        json_dto: JsonPayloadEntity = JsonFilesService().get_by_id(session, _id)
         count = JsonFilesService().delete_by_id(session,_id)
         if count == 0:
             raise QsmithAppException(f"No Json array item found with id [ {_id} ]")
-        return {"message": f"Json array item with code [ {json_dto.code} ] deleted successfully"}
+        return {"message": f"Json array item deleted successfully"}

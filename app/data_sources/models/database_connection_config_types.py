@@ -1,0 +1,3 @@
+from data_sources.models.postgres_connection_config import PostgresConnectionConfig
+
+DatabaseConnectionConfigTypes = PostgresConnectionConfig

@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 
-from database.models.postgres_connection_config import PostgresConnectionConfig
-from database.services.sqlalchemy.engine_factory.sqlalchemy_engine_factory import SQLAlchemyEngineFactory
+from data_sources.models.postgres_connection_config import PostgresConnectionConfig
+from sqlalchemy_utils.engine_factory.sqlalchemy_engine_factory import SQLAlchemyEngineFactory
 
 class PostgresSQLAlchemyEngineFactory(SQLAlchemyEngineFactory):
     def create_engine(self,connection_cfg: PostgresConnectionConfig):

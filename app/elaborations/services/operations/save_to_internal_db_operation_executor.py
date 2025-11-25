@@ -4,10 +4,10 @@ from datetime import datetime
 from sqlalchemy import create_engine
 
 from _alembic.services.alembic_config_service import url_from_env
-from database.services.sqlalchemy.database_table_manager import DatabaseTableManager
-from database.services.sqlalchemy.database_table_writer import DatabaseTableWriter
 from elaborations.models.dtos.configuration_operation_dto import SaveInternalDBConfigurationOperationDto
 from elaborations.services.operations.operation_executor import OperationExecutor, ExecutionResultDto
+from sqlalchemy_utils.database_table_manager import DatabaseTableManager
+from sqlalchemy_utils.database_table_writer import DatabaseTableWriter
 
 
 class SaveInternalDbOperationExecutor(OperationExecutor):

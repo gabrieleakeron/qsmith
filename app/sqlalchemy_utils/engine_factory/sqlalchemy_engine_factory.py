@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from database.models.database_connection_config_types import DatabaseConnectionConfigTypes
+from data_sources.models.database_connection_config_types import DatabaseConnectionConfigTypes
 
 
 class SQLAlchemyEngineFactory(ABC):

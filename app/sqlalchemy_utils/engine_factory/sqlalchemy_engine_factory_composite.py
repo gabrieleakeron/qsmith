@@ -1,8 +1,8 @@
-from database.models.database_connection_config_types import DatabaseConnectionConfigTypes
-from database.models.postgres_connection_config import PostgresConnectionConfig
-from database.services.sqlalchemy.engine_factory.postgres_sqlalchemy_engine_factory import \
+from data_sources.models.database_connection_config_types import DatabaseConnectionConfigTypes
+from data_sources.models.postgres_connection_config import PostgresConnectionConfig
+from sqlalchemy_utils.engine_factory.postgres_sqlalchemy_engine_factory import \
     PostgresSQLAlchemyEngineFactory
-from database.services.sqlalchemy.engine_factory.sqlalchemy_engine_factory import SQLAlchemyEngineFactory
+from sqlalchemy_utils.engine_factory.sqlalchemy_engine_factory import SQLAlchemyEngineFactory
 
 _CONNECTOR_MAPPING: dict[type[DatabaseConnectionConfigTypes], type[SQLAlchemyEngineFactory]] = {
     PostgresConnectionConfig: PostgresSQLAlchemyEngineFactory,

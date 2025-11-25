@@ -1,5 +1,3 @@
-from contextlib import asynccontextmanager
-
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
@@ -10,7 +8,7 @@ from exceptions.exception_handler import app_exception_handler, generic_exceptio
 from brokers.api.broker_api import router as brokers_connection_router
 from brokers.api.broker_queues_api import router as brokers_router
 from data_sources.api.json_array_data_source_api import router as json_array_router
-from database.api.database_api import router as database_router
+from data_sources.api.database_data_source_api import router as database_router
 from elaborations.api.scenarios_api import router as scenarios_router
 from elaborations.api.steps_api import router as steps_router
 from elaborations.api.operations_api import router as operations_router
