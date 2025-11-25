@@ -8,19 +8,19 @@ from brokers.services.connections.broker_connection_service import BrokerConnect
 
 DEFAULT_VISIBILITY_TIMEOUT = 30
 
-def client(config: BrokerAmazonConnectionConfig)->BaseClient:
-    return boto3.client(
-        "sqs",
-        region_name=config.region,
-        endpoint_url=config.endpointUrl,
-        aws_access_key_id=config.accessKeyId,
-        aws_secret_access_key=config.secretsAccessKey,
-    )
 
 class AmazonBrokerConnectionService(BrokerConnectionService):
+    def _client(self, config: BrokerAmazonConnectionConfig)->BaseClient:
+        return boto3.client(
+            "sqs",
+            region_name=config.region,
+            endpoint_url=config.endpointUrl,
+            aws_access_key_id=config.accessKeyId,
+            aws_secret_access_key=config.secretsAccessKey,
+        )
 
     def create_queue(self,config:BrokerAmazonConnectionConfig, q: CreateQueueDto):
-        sqs: BaseClient = client(config)
+        sqs: BaseClient = self._client(config)
 
         attributes = self.create_attributes(q)
 
@@ -31,7 +31,7 @@ class AmazonBrokerConnectionService(BrokerConnectionService):
             )
             queue_url = resp.get("QueueUrl")
             print(f" Coda creata: {queue_url} ")
-            return {"queueUrl": queue_url}
+            return {"queue_url": queue_url}
 
         except ClientError as e:
             raise Exception(f"Error creating SQS queue: {e}")
@@ -53,7 +53,7 @@ class AmazonBrokerConnectionService(BrokerConnectionService):
         return attributes
 
     def delete_queue(self, config:BrokerAmazonConnectionConfig, queue_url:str):
-        sqs: BaseClient = client(config)
+        sqs: BaseClient = self._client(config)
         try:
             sqs.delete_queue(QueueUrl=queue_url)
             print(f" Coda eliminata: {queue_url} ")
@@ -62,7 +62,7 @@ class AmazonBrokerConnectionService(BrokerConnectionService):
             raise Exception(f"Error deleting SQS queue: {e}")
 
     def list_queues(self, config:BrokerAmazonConnectionConfig):
-        sqs: BaseClient = client(config)
+        sqs: BaseClient = self._client(config)
         try:
             resp = sqs.list_queues()
             queue_urls = resp.get("QueueUrls", [])

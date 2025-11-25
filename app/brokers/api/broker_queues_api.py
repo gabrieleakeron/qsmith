@@ -1,5 +1,3 @@
-import json
-
 from fastapi import APIRouter
 
 from _alembic.models.queue_entity import QueueEntity
@@ -9,51 +7,54 @@ from brokers.models.dto.create_queue_dto import CreateQueueDto
 from brokers.models.dto.find_all_messages_dto import FindAllMessagesDto
 from brokers.models.dto.queue_configuration_dto import QueueConfigurationDto
 from brokers.models.dto.queue_messages_dto import QueueMessagesDto
+from brokers.services.alembic.broker_connection_service import load_broker_connection
 from brokers.services.alembic.queue_service import QueueService
 from brokers.services.connections.broker_connection_service_factory import BrokerConnectionServiceFactory
 from brokers.services.connections.queue.queue_connection_service_factory import QueueConnectionServiceFactory
-from brokers.services.alembic.broker_connection_service import load_broker_connection
+from exceptions.app_exception import QsmithAppException
 
 router = APIRouter(prefix="/broker")
 
+
 @router.get("/{broker_id}/queue")
-async def find_all_queues_api(broker_id:str)->list[dict]:
+async def find_all_queues_api(broker_id: str) -> list[dict]:
     with managed_session() as session:
-        queues: list[QueueEntity]= QueueService().get_all_by_broker_id(session,broker_id)
-    result: list[dict] = []
-    for queue in queues:
-        cfg = QueueConfigurationDto.model_validate(json.loads(queue.configuration_json))
-        result.append({
-            "id": queue.id,
-            "code": queue.code,
-            "description": queue.description,
+        queues: list[QueueEntity] = QueueService().get_all_by_broker_id(session, broker_id)
+        result: list[dict] = []
+        for queue in queues:
+            cfg = QueueConfigurationDto.model_validate(queue.configuration_json)
+            result.append({
+                "id": queue.id,
+                "code": queue.code,
+                "description": queue.description,
+                "url": cfg.url,
+                "fifoQueue": cfg.fifoQueue,
+                "contentBasedDeduplication": cfg.contentBasedDeduplication,
+                "defaultVisibilityTimeout": cfg.defaultVisibilityTimeout,
+                "delay": cfg.delay,
+                "receiveMessageWait": cfg.receiveMessageWait
+            })
+        return result
+
+
+@router.get("/{broker_id}/queue/{queue_id}")
+async def find_queue_api(broker_id: str, queue_id: str):
+    with managed_session() as session:
+        queue_entity: QueueEntity | None = QueueService().get_by_id(session, queue_id)
+        if queue_entity is None:
+            raise QsmithAppException(f"Queue with name '{queue_id}' not found")
+        cfg = QueueConfigurationDto.model_validate(queue_entity.configuration_json)
+        return {
+            "id": queue_entity.id,
+            "code": queue_entity.code,
+            "description": queue_entity.description,
             "url": cfg.url,
             "fifoQueue": cfg.fifoQueue,
             "contentBasedDeduplication": cfg.contentBasedDeduplication,
             "defaultVisibilityTimeout": cfg.defaultVisibilityTimeout,
             "delay": cfg.delay,
             "receiveMessageWait": cfg.receiveMessageWait
-        })
-    return result
-
-@router.get("/{broker_id}/queue/{queue_id}")
-async def find_queue_api(broker_id: str, queue_id: str):
-    with managed_session() as session:
-        queue_entity: QueueEntity | None = QueueService().get_by_id(session, queue_id)
-    if queue_entity is None:
-        return {"error": f"Queue with name '{queue_id}' not found"}
-    cfg = QueueConfigurationDto.model_validate(json.loads(queue_entity.configuration_json))
-    return {
-        "id": queue_entity.id,
-        "code": queue_entity.code,
-        "description": queue_entity.description,
-        "url": cfg.url,
-        "fifoQueue": cfg.fifoQueue,
-        "contentBasedDeduplication": cfg.contentBasedDeduplication,
-        "defaultVisibilityTimeout": cfg.defaultVisibilityTimeout,
-        "delay": cfg.delay,
-        "receiveMessageWait": cfg.receiveMessageWait
-    }
+        }
 
 
 @router.post("/{broker_id}/queue")
@@ -75,26 +76,28 @@ async def insert_queue_api(broker_id: str, c: CreateQueueDto):
                 "delay": c.delay,
                 "receiveMessageWait": c.receiveMessageWait
             }
-            _id = QueueService().insert(session,entity)
+            _id = QueueService().insert(session, entity)
             return {"id": _id, "message": f"Queue '{c.code}' created successfully"}
     except Exception as e:
-        return {"error": str(e)}
+        raise QsmithAppException(str(e))
+
 
 @router.delete("/{broker_id}/queue/{queue_id}")
 async def delete_queue_api(broker_id: str, queue_id: str):
     try:
         with managed_session() as session:
-            queue: QueueEntity | None = QueueService().get_by_id(session,queue_id)
+            queue: QueueEntity | None = QueueService().get_by_id(session, queue_id)
             if queue is None:
                 return {"error": f"Queue with name '{queue_id}' not found"}
 
             connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
             service = BrokerConnectionServiceFactory.get_service(connection_config)
-            result = service.delete_queue(connection_config, queue_dto.url)
-            QueueService().delete_by_id(session,queue_id)
+            cfg_dto: QueueConfigurationDto = QueueConfigurationDto.model_validate(queue.configuration_json)
+            result = service.delete_queue(connection_config, cfg_dto.url)
+            QueueService().delete_by_id(session, queue_id)
             return result
     except Exception as e:
-        return {"error": f"Could not delete queue '{queue_id}': {str(e)}"}
+        raise  QsmithAppException(f"Could not delete queue '{queue_id}': {str(e)}")
 
 
 @router.post("/{broker_id}/queue/{queue_id}/messages")
@@ -108,10 +111,10 @@ async def publish_messages_api(broker_id: str, queue_id: str, p: QueueMessagesDt
 async def test_queue_connection_api(broker_id: str, queue_id: str):
     connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
     if connection_config is None:
-        return {"message": f"Connection {broker_id} not found"}, 404
+        raise QsmithAppException(f"Connection {broker_id} not found")
     service = QueueConnectionServiceFactory.get_service(connection_config)
     if not service.test_connection(connection_config, queue_id):
-        return {"message": f"Connection is not valid"}, 400
+        return {"message": f"Connection is not valid"}
     return {"message": f"Connection is valid"}
 
 
@@ -120,7 +123,6 @@ async def receive_messages_api(broker_id: str, queue_id: str, f: FindAllMessages
     connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
     service = QueueConnectionServiceFactory.get_service(connection_config)
     msgs = service.receive_messages(connection_config, queue_id=queue_id, max_messages=f.count)
-    print(msgs)
     return msgs
 
 

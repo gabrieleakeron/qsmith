@@ -27,7 +27,8 @@
     1. Assicurarsi di aver attivato il VENV 
         - venv\Scripts\activate 
     2. Avvio server fastapi
-        - python -m fastapi dev --port 9082  
+        - cd src
+        - python -m fastapi dev --port xxxx 
 
 ### DOCKER
     CREAZIONE E AVVIO AMBIENTE DOCKER CONTAINER

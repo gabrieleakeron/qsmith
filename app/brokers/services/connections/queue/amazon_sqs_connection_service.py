@@ -17,48 +17,42 @@ DEFAULT_VISIBILITY_TIMEOUT = 30
 MAX_NUMBER_OF_MESSAGES = 10
 WAIT_TIME_SECONDS = 20
 
-def extract_url_from_queue(queue_cfg_dto:QueueConfigurationDto) -> str:
-    if not queue_cfg_dto:
-        raise Exception(f"Queue {queue_cfg_dto} not found")
-    return queue_cfg_dto.url
-
-def client(config: BrokerAmazonConnectionConfig)->BaseClient:
-    return boto3.client(
-        "sqs",
-        region_name=config.region,
-        endpoint_url=config.endpointUrl,
-        aws_access_key_id=config.accessKeyId,
-        aws_secret_access_key=config.secretsAccessKey,
-    )
-
-def test_connection(sqs,queue_url:str):
-    try:
-        sqs.get_queue_attributes(QueueUrl=queue_url, AttributeNames=["All"])
-    except ClientError as e:
-        raise Exception(f"Error accessing SQS queue: {e}")
-
 class AmazonSQSConnectionService(QueueConnectionService):
 
-    def test_connection(self, config:BrokerAmazonConnectionConfig, queue_id:str) -> bool:
-        sqs = client(config)
+    def _client(self, config: BrokerAmazonConnectionConfig)->BaseClient:
+        return boto3.client(
+            "sqs",
+            region_name=config.region,
+            endpoint_url=config.endpointUrl,
+            aws_access_key_id=config.accessKeyId,
+            aws_secret_access_key=config.secretsAccessKey,
+        )
+    def _extract_url_from_queue(self,queue_cfg_dto:QueueConfigurationDto) -> str:
+        if not queue_cfg_dto:
+            raise Exception(f"Queue {queue_cfg_dto} not found")
+        return queue_cfg_dto.url
+
+    def test_connection(self, config:BrokerAmazonConnectionConfig, queue_id:str) -> tuple[BaseClient, QueueConfigurationDto, str]:
+        sqs = self._client(config)
         with managed_session() as session:
             queue: QueueEntity = QueueService().get_by_id(session,queue_id)
-        queue_cfg_dto = QueueConfigurationDto.model_validate(json.loads(queue.configuration_json))
-        queue_url  = extract_url_from_queue(queue_cfg_dto)
-        print("queue_url: "+queue_url)
-        test_connection(sqs,queue_url)
-        return True
+            queue_cfg_dto = QueueConfigurationDto.model_validate(queue.configuration_json)
+            queue_url  = self._extract_url_from_queue(queue_cfg_dto)
+        try:
+            sqs.get_queue_attributes(QueueUrl=queue_url, AttributeNames=["All"])
+        except ClientError as e:
+            raise Exception(f"Error accessing SQS queue: {e}")
+
+        return sqs, queue_cfg_dto, queue_url
 
     def publish_messages(self, config:BrokerAmazonConnectionConfig, queue_id:str, messages:list[Any]) -> list[dict[str, Any]]:
 
-        sqs = client(config)
-        with managed_session() as session:
-            queue: QueueEntity = QueueService().get_by_id(session,queue_id)
-        queue_cfg_dto = QueueConfigurationDto.model_validate(json.loads(queue.configuration_json))
-        queue_url  = extract_url_from_queue(queue_cfg_dto)
-        test_connection(sqs,queue_url)
-        results = []
+        connection = self.test_connection(config,queue_id)
+        sqs = connection[0]
+        queue_cfg_dto = connection[1]
+        queue_url  = connection[2]
 
+        results = []
         for msg in messages:
 
             try:
@@ -85,12 +79,10 @@ class AmazonSQSConnectionService(QueueConnectionService):
         return results
 
     def receive_messages(self, config:BrokerAmazonConnectionConfig, queue_id:str, max_messages: int = 10) -> list[Any]:
-        sqs: BaseClient = client(config)
-        with managed_session() as session:
-            queue: QueueEntity = QueueService().get_by_id(session,queue_id)
-        queue_cfg_dto = QueueConfigurationDto.model_validate(json.loads(queue.configuration_json))
-        queue_url  = extract_url_from_queue(queue_cfg_dto)
-        test_connection(sqs,queue_url)
+
+        connection = self.test_connection(config,queue_id)
+        sqs = connection[0]
+        queue_url  = connection[2]
 
         all_msgs = []
 
@@ -115,12 +107,9 @@ class AmazonSQSConnectionService(QueueConnectionService):
         return all_msgs
 
     def ack_messages(self, config:BrokerAmazonConnectionConfig, queue_id:str, messages: list[Any])-> list[dict]:
-        sqs: BaseClient = client(config)
-        with managed_session() as session:
-            queue: QueueEntity = QueueService().get_by_id(session,queue_id)
-        queue_cfg_dto = QueueConfigurationDto.model_validate(json.loads(queue.configuration_json))
-        queue_url  = extract_url_from_queue(queue_cfg_dto)
-        test_connection(sqs,queue_url)
+        connection = self.test_connection(config,queue_id)
+        sqs = connection[0]
+        queue_url  = connection[2]
 
         deleted_msgs:list[dict] = []
         for m in messages:

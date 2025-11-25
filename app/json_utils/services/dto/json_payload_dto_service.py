@@ -6,6 +6,7 @@ def convertEntityToDto(entity:JsonPayloadEntity)->dict:
     dto = {
         "id": entity.id,
         "code": entity.code,
+        "description": entity.description,
         "payload": entity.payload,
         "created_date": entity.created_date if entity.created_date else None,
         "modified_date": entity.modified_date if entity.modified_date else None,
