@@ -1,6 +1,7 @@
 FROM python:3.13-slim-bookworm
 
-ENV PYTHONPATH=/qsmith/app
+ENV PYTHONPATH=/qsmith/app \
+    PYTHONUNBUFFERED=1
 
 WORKDIR /qsmith
 

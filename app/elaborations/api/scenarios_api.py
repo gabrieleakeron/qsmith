@@ -9,37 +9,50 @@ from exceptions.app_exception import QsmithAppException
 
 router = APIRouter(prefix="/elaborations")
 
+
 @router.post("/scenario")
-async def insert_scenario_api(scenario_dto:CreateScenarioDto):
+async def insert_scenario_api(scenario_dto: CreateScenarioDto):
     scenario_id = insert_scenario(scenario_dto)
-    return {"id":scenario_id, "message": "Scenario added"}
+    return {"id": scenario_id, "message": "Scenario added"}
 
 
 @router.get("/scenario")
 async def find_all_scenarios_api():
     with managed_session() as session:
-        return ScenarioService().get_all(session)
+        all = ScenarioService().get_all(session)
+        results = []
+        for scenario in all:
+            results.append({
+                "id": scenario.id,
+                "code": scenario.code,
+                "description": scenario.description
+            })
+        return results
+
 
 @router.get("/scenario/{_id}")
-async def find_scenario_api(_id:str):
+async def find_scenario_api(_id: str):
     with managed_session() as session:
         scenario = ScenarioService().get_by_id(session, _id)
         if not scenario:
             raise QsmithAppException(f"No scenario found with id [ {_id} ]")
-    return scenario
+    return {
+        "id": scenario.id,
+        "code": scenario.code,
+        "description": scenario.description
+    }
+
 
 @router.delete("/scenario/{_id}")
 async def delete_scenario_api(_id: str):
     with managed_session() as session:
-        result = ScenarioService().delete_by_id(session,_id)
+        result = ScenarioService().delete_by_id(session, _id)
         if result == 0:
             raise QsmithAppException(f"No scenario found with id [ {_id} ]")
         return {"message": f"{result} scenario(s) deleted"}
+
 
 @router.get("/scenario/{_id}/execute")
 async def execute_scenario_api(_id):
     execute_scenario_by_id(_id)
     return {"message": "Scenario started"}
-
-
-

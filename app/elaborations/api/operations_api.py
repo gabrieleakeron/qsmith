@@ -17,7 +17,7 @@ async def insert_operation_api(dto:CreateOperationDto):
         entity.code = dto.code,
         entity.description = dto.description,
         entity.operation_type = dto.cfg.operationType,
-        entity.configuration_json = dto.cfg
+        entity.configuration_json = dto.cfg.model_dump()
         op_id = OperationService().insert(
             session,
             entity

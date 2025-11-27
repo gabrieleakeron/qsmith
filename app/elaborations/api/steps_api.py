@@ -18,7 +18,7 @@ async def insert_step_api(dto:CreateStepDto):
         entity.code = dto.code,
         entity.description = dto.description,
         entity.step_type = dto.cfg.stepType,
-        entity.configuration_json = dto.cfg
+        entity.configuration_json = dto.cfg.model_dump()
         step_id = StepService().insert(
             session,
             entity
@@ -54,17 +54,5 @@ async def find_step_by_id_api(_id:str):
                 "step_type": step.step_type,
                 "configuration_json": step.configuration_json
             }
-
-@router.delete("/step/{_id}")
-async def delete_step_by_id_api(_id: str):
-    with managed_session() as session:
-        result = StepService().delete_by_id(session, _id)
-        if result == 0:
-            raise QsmithAppException(f"No step found with id [ {_id} ]")
-        return {"message": f"{result} step(s) deleted"}
-
-@router.get("/step/{_id}/execute")
-async def execute_step_by_id_api(_id: str):
-    return execute_step(_id)
 
 

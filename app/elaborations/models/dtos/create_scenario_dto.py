@@ -7,11 +7,9 @@ from elaborations.models.enums.on_failure import OnFailure
 
 class CreateStepOperationDto(BaseModel):
     operation_id: str
-    cfg: ConfigurationOperationTypes
 
 class CreateScenarioStepDto(BaseModel):
     step_id:str
-    cfg: ConfigurationStepDtoTypes
     operations: list[CreateStepOperationDto]
     on_failure:str|None = OnFailure.ABORT
 
