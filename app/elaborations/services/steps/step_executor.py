@@ -9,6 +9,7 @@ from _alembic.models.step_entity import StepEntity
 from elaborations.services.alembic.step_operation_service import StepOperationService
 from elaborations.services.operations.operation_executor_composite import execute_operations
 from _alembic.models.log_entity import LogEntity
+from logs.models.dtos.log_dto import LogDto
 from logs.models.enums.log_level import LogLevel
 from logs.models.enums.log_subject_type import LogSubjectType
 from logs.services.alembic.log_service import LogService
@@ -16,14 +17,15 @@ from logs.services.alembic.log_service import LogService
 
 class StepExecutor(ABC):
     @classmethod
-    def log(cls,session, step_id: str, message: str, payload: dict | list[dict] = None, level: LogLevel = LogLevel.INFO):
-        log_entity = LogEntity()
-        log_entity.subject_type = LogSubjectType.STEP_EXECUTION
-        log_entity.subject = step_id
-        log_entity.message = message
-        log_entity.level = level
-        log_entity.payload = payload
-        LogService().log(session, log_entity)
+    def log(cls, step_id: str, message: str, payload: dict | list[dict] = None, level: LogLevel = LogLevel.INFO):
+        log_dto = LogDto(
+            subject_type=LogSubjectType.STEP_EXECUTION,
+            subject=step_id,
+            message=message,
+            level=level,
+            payload=payload
+        )
+        LogService().log(log_dto)
 
     @classmethod
     def execute_operations(cls, session:Session, step_id: str, data) -> list[dict[str, str]]:

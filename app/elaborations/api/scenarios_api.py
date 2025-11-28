@@ -36,11 +36,11 @@ async def find_scenario_api(_id: str):
         scenario = ScenarioService().get_by_id(session, _id)
         if not scenario:
             raise QsmithAppException(f"No scenario found with id [ {_id} ]")
-    return {
-        "id": scenario.id,
-        "code": scenario.code,
-        "description": scenario.description
-    }
+        return {
+            "id": scenario.id,
+            "code": scenario.code,
+            "description": scenario.description
+        }
 
 
 @router.delete("/scenario/{_id}")

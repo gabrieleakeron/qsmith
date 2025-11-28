@@ -99,13 +99,19 @@ markupsafe==3.0.2
 mdurl==0.1.2
     # via markdown-it-py
 numpy==2.3.3
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   pandas
 openpyxl==3.1.5
     # via -r requirements.in
 packaging==25.0
     # via pytest
+pandas==2.3.3
+    # via -r requirements.in
 pluggy==1.6.0
     # via pytest
+polars==1.33.1
+    # via -r requirements.in
 psycopg2-binary==2.9.10
     # via -r requirements.in
 pydantic[email]==2.11.9
@@ -121,13 +127,17 @@ pygments==2.19.2
 pytest==8.4.2
     # via -r requirements.in
 python-dateutil==2.9.0.post0
-    # via botocore
+    # via
+    #   botocore
+    #   pandas
 python-dotenv==1.1.1
     # via
     #   testcontainers
     #   uvicorn
 python-multipart==0.0.20
     # via fastapi
+pytz==2025.2
+    # via pandas
 pywin32==311
     # via docker
 pyyaml==6.0.2
@@ -179,6 +189,8 @@ typing-extensions==4.15.0
     #   typing-inspection
 typing-inspection==0.4.1
     # via pydantic
+tzdata==2025.2
+    # via pandas
 urllib3==2.5.0
     # via
     #   botocore

@@ -22,8 +22,10 @@ class DataFromDbConfigurationStepDto(ConfigurationStepDto):
     stepType: str = StepType.DATA_FROM_DB.value
     connection_id: str
     table_name: str
-    order_by: list[str]
-    page_size: int = 100
+    query: str | None = None
+    order_by: list[str] | None = None
+    stream: bool = True
+    chunk_size: int = 100
 
 class DataFromQueueConfigurationStepDto(ConfigurationStepDto):
     stepType: str = StepType.DATA_FROM_QUEUE.value

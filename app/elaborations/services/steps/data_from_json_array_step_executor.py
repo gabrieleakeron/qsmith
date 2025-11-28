@@ -12,7 +12,7 @@ class DataFromJsonArrayStepExecutor(StepExecutor):
     def execute(self, session:Session, scenario_step:ScenarioStepEntity, step:StepEntity, cfg: DataFromJsonArrayConfigurationStepDto) -> list[dict[str,str]]:
         json_array = self.load_json_array(session, cfg.json_array_id)
 
-        self.log(session, scenario_step.step_id, f"Try to elaborate {len(json_array)} objects from JSON array")
+        self.log(scenario_step.step_id, f"Try to elaborate {len(json_array)} objects from JSON array")
 
         return self.execute_operations(session, scenario_step.id, json_array)
 

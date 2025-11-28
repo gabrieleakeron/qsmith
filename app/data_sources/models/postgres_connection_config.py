@@ -4,10 +4,6 @@ from data_sources.models.db_type import DbType
 
 class PostgresConnectionConfig(DatabaseConnectionConfig):
     database_type: str  = DbType.POSTGRES
-    host: str
     port: int = 5432
-    database: str
-    db_schema:str
-    user: str
-    password: str
+
 

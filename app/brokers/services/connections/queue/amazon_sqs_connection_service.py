@@ -11,6 +11,7 @@ from brokers.models.connections.amazon.broker_amazon_connection_config import Br
 from brokers.models.dto.queue_configuration_dto import QueueConfigurationDto
 from brokers.services.connections.queue.queue_connection_service import QueueConnectionService
 from brokers.services.alembic.queue_service import QueueService
+from exceptions.app_exception import QsmithAppException
 
 SHORT_VISIBILITY_TIMEOUT = 5
 DEFAULT_VISIBILITY_TIMEOUT = 30
@@ -74,7 +75,7 @@ class AmazonSQSConnectionService(QueueConnectionService):
                 results.append({"status": "ok", "message_id": mid, "http_status": http_status})
 
             except Exception as e:
-                results.append({"status": "error", "error": str(e), "message": msg})
+                raise QsmithAppException(f"Error publishing message to SQS queue: {e}")
 
         return results
 

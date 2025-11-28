@@ -9,6 +9,8 @@ class ConfigurationOperationDto(BaseModel):
 class PublishConfigurationOperationDto(ConfigurationOperationDto):
     operationType: str = OperationType.PUBLISH.value
     queue_id:str
+    template_id: str | None = None
+    template_params: dict | None = None
 
 class SaveInternalDBConfigurationOperationDto(ConfigurationOperationDto):
     operationType: str = OperationType.SAVE_INTERNAL_DB.value

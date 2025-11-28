@@ -39,7 +39,7 @@ class DataFromQueueStepExecutor(StepExecutor):
 
             all_msgs.extend(msgs)
 
-        self.log(session, scenario_step.step_id,f"Try to export {len(all_msgs)} messages read from queue '{queue.code}'")
+        self.log(scenario_step.step_id, f"Try to export {len(all_msgs)} messages read from queue '{queue.code}'")
 
         return self.execute_operations(session, scenario_step.id, all_msgs)
 

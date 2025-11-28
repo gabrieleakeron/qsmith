@@ -6,18 +6,25 @@ from sqlalchemy.orm import InstrumentedAttribute, Session
 from _alembic.models.base_entity import BaseIdEntity
 from _alembic.models.log_entity import LogEntity
 from _alembic.services.base_id_service import BaseIdEntityService
+from _alembic.services.session_context_manager import managed_session
+from logs.models.dtos.log_dto import LogDto
 from logs.models.enums.log_level import LogLevel
 from logs.models.enums.log_subject_type import LogSubjectType
 
 
 class LogService(BaseIdEntityService):
+    def log(self, log_dto:LogDto)->str:
+        with managed_session() as session:
+            log_entity = LogEntity()
+            log_entity.subject_type = log_dto.subject_type
+            log_entity.subject = log_dto.subject
+            log_entity.message = log_dto.message
+            log_entity.level = log_dto.level
+            log_entity.payload = log_dto.payload
+            return self.insert(session, log_entity)
 
     def get_entity_class(self) -> type[BaseIdEntity]:
         return LogEntity
-
-    def log(self, session: Session, log_entity: LogEntity)->str:
-        super().insert(session, log_entity)
-        return log_entity.id
 
     def logs(self, session: Session, entities: list[LogEntity])->list[str]:
         return super().inserts(session, entities)
