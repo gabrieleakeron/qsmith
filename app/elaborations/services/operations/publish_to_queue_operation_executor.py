@@ -16,10 +16,7 @@ class PublishToQueueOperationExecutor(OperationExecutor):
         queue = QueueService().get_by_id(session,cfg.queue_id)
         connection_config: BrokerConnectionConfigTypes = load_broker_connection(queue.broker_id)
         service = QueueConnectionServiceFactory().get_service(connection_config)
-        msg = {
-            "payload":[make_json_safe(item) for item in data]
-        }
-        print(f"Publishing {len(data)} message(s) to queue '{queue.code}'")
+        msg = [make_json_safe(item) for item in data]
         service.publish_messages(connection_config, cfg.queue_id, [msg])
         message=f"Published {len(data)} message(s) to queue '{queue.code}'"
         self.log(operation_id, message=message)

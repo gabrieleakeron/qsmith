@@ -59,7 +59,7 @@ class ElasticmqBrokerConnectionService(AmazonBrokerConnectionService):
                     "id": _id,
                     "queue_url": queue_url
                 }
-            
+
         return {
             "id": "",
             "queue_url": queue_url

@@ -56,8 +56,9 @@ def convert_to_config_step_type(data: dict):
         return DataFromDbConfigurationStepDto(
             connection_id=data.get("connection_id"),
             table_name=data.get("table_name"),
+            query=data.get("query"),
             order_by=data.get("order_by"),
-            page_size=data.get("page_size", 100)
+            chunk_size=data.get("chunk_size", 100)
         )
     elif step_type == StepType.DATA_FROM_QUEUE.value:
         return DataFromQueueConfigurationStepDto(

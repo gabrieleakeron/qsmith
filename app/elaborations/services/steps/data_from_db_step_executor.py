@@ -25,28 +25,14 @@ class DataFromDbStepExecutor(StepExecutor):
         total_rows = 0
         results: list[dict[str, str]] = []
 
-        for chunk in DatabaseTableReader.read_table_chunks(
-                engine,
-                ReadTableConfig(
-                    table_name=cfg.table_name,
-                    query=cfg.query,
-                    chunk_size=cfg.chunk_size,
-                    stream=cfg.stream,
-                    order_by=cfg.order_by
-                )
-        ):
-            chunk_len = len(chunk)
-            if chunk_len == 0:
-                continue
+        rows = DatabaseTableReader.read_full_table(engine, ReadTableConfig(
+                table_name=cfg.table_name,
+                chunk_size=cfg.chunk_size
+        ))
 
-            op_result = execute_operations(session, operations_id, chunk)
+        op_result = execute_operations(session, operations_id, rows)
 
-            results.extend(op_result.result)
-
-            total_rows += chunk_len
-
-            self.log(scenario_step.step_id,
-                     f"Processed chunk of {chunk_len} rows from '{cfg.table_name}'. Total so far: {total_rows}")
+        results.extend(op_result.result)
 
         self.log(scenario_step.step_id,
                  f"Finished reading table '{cfg.table_name}'. Total rows processed: {total_rows}")

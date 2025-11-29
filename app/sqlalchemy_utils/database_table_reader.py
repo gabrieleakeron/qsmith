@@ -52,3 +52,23 @@ class DatabaseTableReader:
                 df = pl.from_records(rows)
                 chunk = df.to_dicts()
                 yield chunk
+
+    @classmethod
+    def read_full_table(
+            cls,
+            engine: Engine,
+            cfg: ReadTableConfig
+    ) -> List[Dict]:
+        if not cfg.query and not cfg.table_name:
+            raise ValueError("Either query or table_name must be provided")
+
+        sql = cfg.query
+        if not sql and cfg.table_name:
+            sql = f"SELECT * FROM {cfg.table_name}"
+            sql += f" ORDER BY {', '.join(cfg.order_by)}" if cfg.order_by else ""
+
+        with engine.connect() as connection:
+            result: Result = connection.execute(text(sql))
+            rows = result.fetchall()
+            df = pl.from_records(rows)
+            return df.to_dicts()
