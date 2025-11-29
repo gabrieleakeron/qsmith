@@ -12,8 +12,6 @@ stages:
 
 build:
   stage: build
-  needs:
-    - test
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"
   variables:
