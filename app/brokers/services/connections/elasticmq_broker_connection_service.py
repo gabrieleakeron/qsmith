@@ -46,18 +46,25 @@ class ElasticmqBrokerConnectionService(AmazonBrokerConnectionService):
         except ClientError as e:
             raise Exception(f"Error creating SQS queue: {e}")
 
-        with managed_session() as session:
-            entity = QueueEntity()
-            entity.broker_id = broker_id
-            entity.code = queue_code
-            entity.description = c.description
-            entity.configuration_json = cfg.model_dump()
-            _id = QueueService().insert(session, entity)
+        if c.save_on_db :
+            with managed_session() as session:
+                entity = QueueEntity()
+                entity.broker_id = broker_id
+                entity.code = queue_code
+                entity.description = c.description
+                entity.configuration_json = cfg.model_dump()
+                _id = QueueService().insert(session, entity)
 
-            return {
-                "id": _id,
-                "queue_url": queue_url
-            }
+                return {
+                    "id": _id,
+                    "queue_url": queue_url
+                }
+            
+        return {
+            "id": "",
+            "queue_url": queue_url
+        }
+
 
     def create_attributes(self, cfg: ElasticmqQueueConfigurationDto):
 

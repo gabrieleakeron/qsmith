@@ -7,3 +7,4 @@ class CreateQueueDto(BaseModel):
     code: str
     description: str | None = None
     queueConfiguration: QueueConfigurationTypes
+    save_on_db:bool=True

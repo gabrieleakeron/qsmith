@@ -21,12 +21,12 @@ def init_elasticmq():
                 service = BrokerConnectionServiceFactory.get_service(brokers_connection)
                 queues = QueueService().get_all_by_broker_id(session, b.id)
                 for queue_entity in queues:
-                    QueueService().delete_by_id(session,queue_entity.id)
                     cfg_dto = convert_queue_configuration_types(queue_entity.configuration_json)
                     service.create_queue(b.id, brokers_connection, CreateQueueDto(
                         code=queue_entity.code,
                         description=queue_entity.description,
-                        queueConfiguration=cfg_dto
+                        queueConfiguration=cfg_dto,
+                        save_on_db=False
                     ))
             except Exception as e:
                 print(f"Error initializing ElasticMQ for broker {b.id}: {e}")

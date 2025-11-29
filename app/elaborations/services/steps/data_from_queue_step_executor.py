@@ -3,14 +3,12 @@ import time
 from sqlalchemy.orm import Session
 
 from _alembic.models.scenario_step_entity import ScenarioStepEntity
-from _alembic.services.session_context_manager import managed_session
+from _alembic.models.step_entity import StepEntity
 from brokers.models.connections.broker_connection_config_types import BrokerConnectionConfigTypes
-from brokers.services.connections.queue.queue_connection_service_factory import QueueConnectionServiceFactory
 from brokers.services.alembic.broker_connection_service import load_broker_connection
 from brokers.services.alembic.queue_service import QueueService
-from elaborations.models.dtos.configuration_step_dtos import DataFromQueueConfigurationStepDto, \
-    convert_to_config_step_type
-from _alembic.models.step_entity import StepEntity
+from brokers.services.connections.queue.queue_connection_service_factory import QueueConnectionServiceFactory
+from elaborations.models.dtos.configuration_step_dtos import DataFromQueueConfigurationStepDto
 from elaborations.services.steps.step_executor import StepExecutor
 
 

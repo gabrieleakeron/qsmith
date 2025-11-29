@@ -66,4 +66,13 @@ async def find_step_by_id_api(_id:str):
                 "configuration_json": step.configuration_json
             }
 
+@router.delete("/step/{_id}")
+async def delete_step_by_id_api(_id:str):
+    with managed_session() as session:
+        step = StepService().get_by_id(session, _id)
+        if not step:
+            raise QsmithAppException(f"No step found with id [ {_id} ]")
+        StepService().delete_by_id(session, _id)
+        return {"message": f"Step with id [ {_id} ] deleted successfully"}
+
 
