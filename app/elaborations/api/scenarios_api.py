@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 
+from _alembic.models.scenario_entity import ScenarioEntity
 from _alembic.services.session_context_manager import managed_session
 from elaborations.models.dtos.create_scenario_dto import CreateScenarioDto
 from elaborations.services.alembic.scenario_service import ScenarioService
-from elaborations.services.scenarios.scenario_dto_service import insert_scenario
 from elaborations.services.scenarios.scenario_executor_service import execute_scenario_by_id
 from exceptions.app_exception import QsmithAppException
 
@@ -12,7 +12,11 @@ router = APIRouter(prefix="/elaborations")
 
 @router.post("/scenario")
 async def insert_scenario_api(scenario_dto: CreateScenarioDto):
-    scenario_id = insert_scenario(scenario_dto)
+    with managed_session() as session:
+        scenario_entity = ScenarioEntity()
+        scenario_entity.code = scenario_dto.code
+        scenario_entity.description = scenario_dto.description
+        scenario_id = ScenarioService().insert(session, scenario_entity)
     return {"id": scenario_id, "message": "Scenario added"}
 
 

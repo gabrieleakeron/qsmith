@@ -4,7 +4,7 @@ import boto3
 from botocore.client import BaseClient
 
 from brokers.models.connections.elastiqmq.broker_elasticmq_connection_config import BrokerElasticmqConnectionConfig
-from brokers.models.dto.queue_configuration_dto import QueueConfigurationDto
+from brokers.models.dto.configurations.queue_configuration_dto import QueueConfigurationDto
 from brokers.services.connections.queue.amazon_sqs_connection_service import AmazonSQSConnectionService
 
 DOCKER_HOST_IP = "host.docker.internal"

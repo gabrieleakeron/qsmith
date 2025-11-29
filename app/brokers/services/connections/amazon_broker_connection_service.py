@@ -1,12 +1,13 @@
 import boto3
 from botocore.client import BaseClient
-from botocore.exceptions import ClientError
 
+from _alembic.models.queue_entity import QueueEntity
+from _alembic.services.session_context_manager import managed_session
 from brokers.models.connections.amazon.broker_amazon_connection_config import BrokerAmazonConnectionConfig
+from brokers.models.dto.configurations.amazon_queue_configuration_dto import AmazonQueueConfigurationDto
 from brokers.models.dto.create_queue_dto import CreateQueueDto
+from brokers.services.alembic.queue_service import QueueService
 from brokers.services.connections.broker_connection_service import BrokerConnectionService
-
-DEFAULT_VISIBILITY_TIMEOUT = 30
 
 
 class AmazonBrokerConnectionService(BrokerConnectionService):
@@ -19,54 +20,22 @@ class AmazonBrokerConnectionService(BrokerConnectionService):
             aws_secret_access_key=config.secretsAccessKey,
         )
 
-    def create_queue(self,config:BrokerAmazonConnectionConfig, q: CreateQueueDto):
+    def create_queue(self, broker_id:str, config:BrokerAmazonConnectionConfig, c: CreateQueueDto):
+        cfg:AmazonQueueConfigurationDto = c.queueConfiguration
+        queue_url = f"{config.endpointUrl}/{c.code}"
+        cfg.url = queue_url
+        with managed_session() as session:
+            entity = QueueEntity()
+            entity.broker_id = broker_id
+            entity.code = c.code
+            entity.description = c.description
+            entity.configuration_json = cfg.model_dump()
+            _id = QueueService().insert(session, entity)
+
+    def delete_queue(self, config:BrokerAmazonConnectionConfig, cfg:AmazonQueueConfigurationDto, queue_id: str):
         sqs: BaseClient = self._client(config)
+        with managed_session() as session:
+            sqs.delete_queue(QueueUrl=cfg.queue_url)
+            QueueService().delete_by_id(session, queue_id)
+            return {"message": f"Queue {cfg.queue_url} deleted successfully"}
 
-        attributes = self.create_attributes(q)
-
-        try:
-            resp = sqs.create_queue(
-                QueueName=q.code,
-                Attributes=attributes
-            )
-            queue_url = resp.get("QueueUrl")
-            print(f" Coda creata: {queue_url} ")
-            return {"queue_url": queue_url}
-
-        except ClientError as e:
-            raise Exception(f"Error creating SQS queue: {e}")
-
-    def create_attributes(self, q:CreateQueueDto):
-        attributes = {
-            "VisibilityTimeout": str(q.defaultVisibilityTimeout or DEFAULT_VISIBILITY_TIMEOUT),
-            "DelaySeconds": str(q.delay or 0),
-            "ReceiveMessageWaitTimeSeconds": str(q.receiveMessageWait or 0),
-        }
-
-        if q.fifoQueue:
-            attributes["FifoQueue"] = "true"
-            if not q.code.endswith(".fifo"):
-                q.code += ".fifo"
-            if q.contentBasedDeduplication:
-                attributes["ContentBasedDeduplication"] = "true"
-
-        return attributes
-
-    def delete_queue(self, config:BrokerAmazonConnectionConfig, queue_url:str):
-        sqs: BaseClient = self._client(config)
-        try:
-            sqs.delete_queue(QueueUrl=queue_url)
-            print(f" Coda eliminata: {queue_url} ")
-            return {"message": f"Queue {queue_url} deleted successfully"}
-        except ClientError as e:
-            raise Exception(f"Error deleting SQS queue: {e}")
-
-    def list_queues(self, config:BrokerAmazonConnectionConfig):
-        sqs: BaseClient = self._client(config)
-        try:
-            resp = sqs.list_queues()
-            queue_urls = resp.get("QueueUrls", [])
-            print(f" Code trovate: {len(queue_urls)} ")
-            return {"queueUrls": queue_urls}
-        except ClientError as e:
-            raise Exception(f"Error listing SQS queues: {e}")

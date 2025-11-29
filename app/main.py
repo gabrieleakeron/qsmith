@@ -9,9 +9,11 @@ from brokers.api.broker_api import router as brokers_connection_router
 from brokers.api.broker_queues_api import router as brokers_router
 from data_sources.api.json_array_data_source_api import router as json_array_router
 from data_sources.api.database_data_source_api import router as database_router
-from elaborations.api.scenarios_api import router as scenarios_router
 from elaborations.api.steps_api import router as steps_router
 from elaborations.api.operations_api import router as operations_router
+from elaborations.api.scenarios_api import router as scenarios_router
+from elaborations.api.scenarios_step_api import router as scenario_steps_router
+from elaborations.api.step_operations_api import router as step_operations_router
 from json_utils.api.json_utils_api import router as json_utils_router
 from logs.api.logs_api import router as logs_router
 
@@ -36,9 +38,11 @@ app.include_router(brokers_router)
 app.include_router(brokers_connection_router)
 app.include_router(json_array_router)
 app.include_router(database_router)
-app.include_router(scenarios_router)
 app.include_router(operations_router)
 app.include_router(steps_router)
+app.include_router(scenarios_router)
+app.include_router(scenario_steps_router)
+app.include_router(step_operations_router)
 app.include_router(json_utils_router)
 app.include_router(logs_router)
 
