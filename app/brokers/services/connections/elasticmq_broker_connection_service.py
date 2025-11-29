@@ -78,7 +78,7 @@ class ElasticmqBrokerConnectionService(AmazonBrokerConnectionService):
         sqs: BaseClient = self._client(config)
         try:
             with managed_session() as session:
-                sqs.delete_queue(QueueUrl=cfg.queue_url)
+                sqs.delete_queue(QueueUrl=cfg.url)
                 QueueService().delete_by_id(session, queue_id)
             return {"message": f"Queue {cfg.queue_url} deleted successfully"}
         except ClientError as e:

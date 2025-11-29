@@ -35,16 +35,22 @@ class AmazonSQSConnectionService(QueueConnectionService):
         return queue_cfg_dto.url
 
     def test_connection(self, config:BrokerAmazonConnectionConfig, queue_id:str) -> tuple[BaseClient, str]:
-        sqs = self._client(config)
+
         with managed_session() as session:
             queue: QueueEntity = QueueService().get_by_id(session,queue_id)
             queue_url  = self._extract_url_from_queue(convert_queue_configuration_types(queue.configuration_json))
-        try:
-            sqs.get_queue_attributes(QueueUrl=queue_url, AttributeNames=["All"])
-        except ClientError as e:
-            raise Exception(f"Error accessing SQS queue: {e}")
+
+        sqs = self.test_url_connection(config, queue_url)
 
         return sqs, queue_url
+
+    def test_url_connection(self, config, url):
+        try:
+            sqs = self._client(config)
+            sqs.get_queue_attributes(QueueUrl=url, AttributeNames=["All"])
+        except ClientError as e:
+            raise Exception(f"Error accessing SQS queue: {e}")
+        return sqs
 
     def publish_messages(self, config:BrokerAmazonConnectionConfig, queue_id:str, messages:list[Any]) -> list[dict[str, Any]]:
 

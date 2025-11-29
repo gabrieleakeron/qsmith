@@ -3,17 +3,16 @@ from fastapi import APIRouter
 from _alembic.models.queue_entity import QueueEntity
 from _alembic.services.session_context_manager import managed_session
 from brokers.models.connections.broker_connection_config_types import BrokerConnectionConfigTypes
+from brokers.models.dto.configurations.queue_configuration_types import convert_queue_configuration_types
 from brokers.models.dto.create_queue_dto import CreateQueueDto
 from brokers.models.dto.find_all_messages_dto import FindAllMessagesDto
-from brokers.models.dto.configurations.queue_configuration_dto import QueueConfigurationDto
 from brokers.models.dto.queue_messages_dto import QueueMessagesDto
 from brokers.services.alembic.broker_connection_service import load_broker_connection
 from brokers.services.alembic.queue_service import QueueService
 from brokers.services.connections.broker_connection_service_factory import BrokerConnectionServiceFactory
 from brokers.services.connections.queue.queue_connection_service_factory import QueueConnectionServiceFactory
 from exceptions.app_exception import QsmithAppException
-from brokers.models.dto.configurations.queue_configuration_types import convert_queue_configuration_types
-
+from brokers.models.dto.configurations.queue_configuration_types import QueueConfigurationTypes
 router = APIRouter(prefix="/broker")
 
 
@@ -24,11 +23,12 @@ async def find_all_queues_api(broker_id: str) -> list[dict]:
         results: list[dict] = []
         for queue in queues:
             cfg = convert_queue_configuration_types(queue.configuration_json)
-            result: dict = cfg.model_dump()
-            result["id"] = queue.id
-            result["code"] = queue.code
-            result["description"] = queue.description
-            results.append(result)
+            results.append({
+            "id": queue.id,
+            "code": queue.code,
+            "description": queue.description,
+            "configurationQueue": cfg.model_dump()
+        })
         return results
 
 
@@ -39,11 +39,12 @@ async def find_queue_api(broker_id: str, queue_id: str):
         if queue_entity is None:
             raise QsmithAppException(f"Queue with name '{queue_id}' not found")
         cfg = convert_queue_configuration_types(queue_entity.configuration_json)
-        result: dict = cfg.model_dump()
-        result["id"] = queue_entity.id
-        result["code"] = queue_entity.code
-        result["description"] = queue_entity.description
-        return result
+        return {
+            "id": queue_entity.id,
+            "code": queue_entity.code,
+            "description": queue_entity.description,
+            "configurationQueue": cfg.model_dump()
+        }
 
 
 @router.post("/{broker_id}/queue")
@@ -60,11 +61,12 @@ async def insert_queue_api(broker_id: str, c: CreateQueueDto):
 async def delete_queue_api(broker_id: str, queue_id: str):
     try:
         with managed_session() as session:
+            connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
             queue: QueueEntity | None = QueueService().get_by_id(session, queue_id)
             if queue is None:
                 return {"error": f"Queue with name '{queue_id}' not found"}
             service = BrokerConnectionServiceFactory.get_service(connection_config)
-            cfg_dto: QueueConfigurationDto = convert_queue_configuration_types(queue.configuration_json)
+            cfg_dto: QueueConfigurationTypes = convert_queue_configuration_types(queue.configuration_json)
             return service.delete_queue(connection_config, cfg_dto, queue_id)
     except Exception as e:
         raise  QsmithAppException(f"Could not delete queue '{queue_id}': {str(e)}")

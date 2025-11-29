@@ -8,6 +8,7 @@ from brokers.models.dto.configurations.amazon_queue_configuration_dto import Ama
 from brokers.models.dto.create_queue_dto import CreateQueueDto
 from brokers.services.alembic.queue_service import QueueService
 from brokers.services.connections.broker_connection_service import BrokerConnectionService
+from brokers.services.connections.queue.amazon_sqs_connection_service import AmazonSQSConnectionService
 
 
 class AmazonBrokerConnectionService(BrokerConnectionService):
@@ -24,6 +25,7 @@ class AmazonBrokerConnectionService(BrokerConnectionService):
         cfg:AmazonQueueConfigurationDto = c.queueConfiguration
         queue_url = f"{config.endpointUrl}/{c.code}"
         cfg.url = queue_url
+        AmazonSQSConnectionService().test_url_connection(config, queue_url)
         with managed_session() as session:
             entity = QueueEntity()
             entity.broker_id = broker_id
@@ -33,9 +35,7 @@ class AmazonBrokerConnectionService(BrokerConnectionService):
             _id = QueueService().insert(session, entity)
 
     def delete_queue(self, config:BrokerAmazonConnectionConfig, cfg:AmazonQueueConfigurationDto, queue_id: str):
-        sqs: BaseClient = self._client(config)
         with managed_session() as session:
-            sqs.delete_queue(QueueUrl=cfg.queue_url)
             QueueService().delete_by_id(session, queue_id)
             return {"message": f"Queue {cfg.queue_url} deleted successfully"}
 
