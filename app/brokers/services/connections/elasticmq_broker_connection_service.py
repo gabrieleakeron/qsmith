@@ -6,6 +6,8 @@ from _alembic.models.queue_entity import QueueEntity
 from _alembic.services.session_context_manager import managed_session
 from brokers.models.connections.elastiqmq.broker_elasticmq_connection_config import BrokerElasticmqConnectionConfig
 from brokers.models.dto.configurations.elasticmq_queue_configuration_dto import ElasticmqQueueConfigurationDto
+from brokers.models.dto.configurations.queue_configuration_types import convert_queue_configuration_types, \
+    QueueConfigurationTypes
 from brokers.models.dto.create_queue_dto import CreateQueueDto
 from brokers.services.alembic.queue_service import QueueService
 from brokers.services.connections.amazon_broker_connection_service import AmazonBrokerConnectionService
@@ -81,12 +83,14 @@ class ElasticmqBrokerConnectionService(AmazonBrokerConnectionService):
 
         return attributes
 
-    def delete_queue(self, config:BrokerElasticmqConnectionConfig, cfg:ElasticmqQueueConfigurationDto, queue_id: str)->dict[str, str]:
+    def delete_queue(self, config:BrokerElasticmqConnectionConfig,queue_id: str)->dict[str, str]:
         sqs: BaseClient = self._client(config)
         try:
             with managed_session() as session:
+                queue = QueueService().get_by_id(session,queue_id)
+                cfg: QueueConfigurationTypes = convert_queue_configuration_types(queue.configuration_json)# to raise exception if not found
                 sqs.delete_queue(QueueUrl=cfg.url)
                 QueueService().delete_by_id(session, queue_id)
-            return {"message": f"Queue {cfg.queue_url} deleted successfully"}
+                return {"message": f"Queue {cfg.url} deleted successfully"}
         except ClientError as e:
             raise Exception(f"Error deleting SQS queue: {e}")

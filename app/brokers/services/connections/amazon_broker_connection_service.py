@@ -5,6 +5,8 @@ from _alembic.models.queue_entity import QueueEntity
 from _alembic.services.session_context_manager import managed_session
 from brokers.models.connections.amazon.broker_amazon_connection_config import BrokerAmazonConnectionConfig
 from brokers.models.dto.configurations.amazon_queue_configuration_dto import AmazonQueueConfigurationDto
+from brokers.models.dto.configurations.queue_configuration_types import QueueConfigurationTypes, \
+    convert_queue_configuration_types
 from brokers.models.dto.create_queue_dto import CreateQueueDto
 from brokers.services.alembic.queue_service import QueueService
 from brokers.services.connections.broker_connection_service import BrokerConnectionService
@@ -34,8 +36,10 @@ class AmazonBrokerConnectionService(BrokerConnectionService):
             entity.configuration_json = cfg.model_dump()
             _id = QueueService().insert(session, entity)
 
-    def delete_queue(self, config:BrokerAmazonConnectionConfig, cfg:AmazonQueueConfigurationDto, queue_id: str):
+    def delete_queue(self, config:BrokerAmazonConnectionConfig,queue_id: str):
         with managed_session() as session:
+            queue = QueueService().get_by_id(session, queue_id)
+            cfg: QueueConfigurationTypes = convert_queue_configuration_types(queue.configuration_json)
             QueueService().delete_by_id(session, queue_id)
             return {"message": f"Queue {cfg.queue_url} deleted successfully"}
 

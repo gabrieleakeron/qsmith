@@ -60,14 +60,9 @@ async def insert_queue_api(broker_id: str, c: CreateQueueDto):
 @router.delete("/{broker_id}/queue/{queue_id}")
 async def delete_queue_api(broker_id: str, queue_id: str):
     try:
-        with managed_session() as session:
-            connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
-            queue: QueueEntity | None = QueueService().get_by_id(session, queue_id)
-            if queue is None:
-                return {"error": f"Queue with name '{queue_id}' not found"}
-            service = BrokerConnectionServiceFactory.get_service(connection_config)
-            cfg_dto: QueueConfigurationTypes = convert_queue_configuration_types(queue.configuration_json)
-            return service.delete_queue(connection_config, cfg_dto, queue_id)
+        connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
+        service = BrokerConnectionServiceFactory.get_service(connection_config)
+        return service.delete_queue(connection_config, queue_id)
     except Exception as e:
         raise  QsmithAppException(f"Could not delete queue '{queue_id}': {str(e)}")
 
