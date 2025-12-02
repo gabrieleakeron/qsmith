@@ -11,6 +11,7 @@ from brokers.services.alembic.broker_connection_service import load_broker_conne
 from brokers.services.alembic.queue_service import QueueService
 from brokers.services.connections.broker_connection_service_factory import BrokerConnectionServiceFactory
 from brokers.services.connections.queue.queue_connection_service_factory import QueueConnectionServiceFactory
+from brokers.services.elaborations.async_queue_service import AsyncQueueService
 from exceptions.app_exception import QsmithAppException
 from brokers.models.dto.configurations.queue_configuration_types import QueueConfigurationTypes
 router = APIRouter(prefix="/broker")
@@ -91,6 +92,15 @@ async def receive_messages_api(broker_id: str, queue_id: str, f: FindAllMessages
     service = QueueConnectionServiceFactory.get_service(connection_config)
     msgs = service.receive_messages(connection_config, queue_id=queue_id, max_messages=f.count)
     return msgs
+
+@router.get("/{broker_id}/queue/{queue_id}/start-messages")
+async def start_receive_messages_api(broker_id: str, queue_id: str):
+    return AsyncQueueService.start_receiving_messages(broker_id, queue_id)
+
+
+@router.get("/{broker_id}/queue/{queue_id}/stop-messages")
+async def stop_receive_messages_api(broker_id: str, queue_id: str):
+    return AsyncQueueService.stop_receiving_messages(queue_id)
 
 
 @router.delete("/{broker_id}/queue/{queue_id}/messages")
