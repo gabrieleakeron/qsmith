@@ -14,7 +14,7 @@ class AsyncQueueService:
         if broker_id in threads:
             existing_thread = threads[broker_id]
             if existing_thread.is_alive():
-                return
+                return {"status":"already_running"}
         threads[queue_id]=thread
         thread.start()
         return {"status":"started"}
