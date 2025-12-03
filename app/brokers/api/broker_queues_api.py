@@ -93,6 +93,13 @@ async def receive_messages_api(broker_id: str, queue_id: str, f: FindAllMessages
     msgs = service.receive_messages(connection_config, queue_id=queue_id, max_messages=f.count)
     return msgs
 
+
+@router.delete("/{broker_id}/queue/{queue_id}/messages")
+async def ack_messages_api(broker_id: str, queue_id: str, d: QueueMessagesDto):
+    connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
+    service = QueueConnectionServiceFactory.get_service(connection_config)
+    return service.ack_messages(connection_config, queue_id=queue_id, messages=d.messages)
+
 @router.get("/{broker_id}/queue/{queue_id}/start-messages")
 async def start_receive_messages_api(broker_id: str, queue_id: str):
     return AsyncQueueService.start_receiving_messages(broker_id, queue_id)
@@ -102,9 +109,8 @@ async def start_receive_messages_api(broker_id: str, queue_id: str):
 async def stop_receive_messages_api(broker_id: str, queue_id: str):
     return AsyncQueueService.stop_receiving_messages(queue_id)
 
+@router.get("/{broker_id}/queue/{queue_id}/publish-from-table/{export_table_name}")
+async def publish_messages_from_table_api(broker_id: str, queue_id: str, export_table_name: str):
+    return AsyncQueueService.publish_from_table(broker_id, queue_id, export_table_name)
 
-@router.delete("/{broker_id}/queue/{queue_id}/messages")
-async def ack_messages_api(broker_id: str, queue_id: str, d: QueueMessagesDto):
-    connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
-    service = QueueConnectionServiceFactory.get_service(connection_config)
-    return service.ack_messages(connection_config, queue_id=queue_id, messages=d.messages)
+

@@ -17,7 +17,22 @@ class SaveToExternalDbOperationExecutor(OperationExecutor):
 
         engine = create_sqlalchemy_engine(connection)
 
-        DatabaseTableWriter.insert_rows(engine, cfg.table_name, data)
+        if not data or len(data) == 0:
+            message = f"No data to insert into {cfg.table_name} table"
+            self.log(operation_id, message)
+            return ExecutionResultDto(
+                data=data,
+                result=[{"message": message}]
+            )
+
+        sample_row = {}
+        for d in data:
+            for key, value in d.items():
+                sample_row[key] = value
+
+
+        table = DatabaseTableWriter.ensure_table_exists(engine, cfg.table_name, sample_row)
+        DatabaseTableWriter.insert_rows(engine, table, data)
 
         message = f"Created {len(data)} rows in {cfg.table_name} table"
 

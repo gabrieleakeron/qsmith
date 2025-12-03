@@ -3,11 +3,12 @@ from typing import Any
 
 from brokers.models.connections.broker_connection_config_types import BrokerConnectionConfigTypes
 
+LONG_VISIBILITY_TIMEOUT = 180
 
 class QueueConnectionService(ABC):
 
     @abstractmethod
-    def test_connection(self, broker_connection_config:BrokerConnectionConfigTypes,queue_id:str) -> bool:
+    def test_connection(self, broker_connection_config:BrokerConnectionConfigTypes,queue_id:str) -> tuple[Any, str]:
         pass
 
     @abstractmethod
@@ -25,6 +26,14 @@ class QueueConnectionService(ABC):
             queue_id:str,
             max_messages: int = 10,
     ) -> list[Any]:
+        pass
+
+    @abstractmethod
+    def change_message_visibility(self,
+                                  sqs,
+                                  queue_url:str,
+                                  messages: list[Any],
+                                  visibility_timeout: int = LONG_VISIBILITY_TIMEOUT):
         pass
 
     @abstractmethod

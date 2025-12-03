@@ -11,11 +11,9 @@ from brokers.models.connections.amazon.broker_amazon_connection_config import Br
 from brokers.models.dto.configurations.queue_configuration_dto import QueueConfigurationDto
 from brokers.models.dto.configurations.queue_configuration_types import convert_queue_configuration_types
 from brokers.services.alembic.queue_service import QueueService
-from brokers.services.connections.queue.queue_connection_service import QueueConnectionService
+from brokers.services.connections.queue.queue_connection_service import QueueConnectionService, LONG_VISIBILITY_TIMEOUT
 from exceptions.app_exception import QsmithAppException
 
-SHORT_VISIBILITY_TIMEOUT = 5
-DEFAULT_VISIBILITY_TIMEOUT = 30
 MAX_NUMBER_OF_MESSAGES = 10
 WAIT_TIME_SECONDS = 20
 
@@ -83,7 +81,6 @@ class AmazonSQSConnectionService(QueueConnectionService):
         return results
 
     def receive_messages(self, config:BrokerAmazonConnectionConfig, queue_id:str, max_messages: int = 10) -> list[Any]:
-
         sqs,queue_url = self.test_connection(config,queue_id)
 
         all_msgs = []
@@ -92,8 +89,7 @@ class AmazonSQSConnectionService(QueueConnectionService):
         resp = sqs.receive_message(
             QueueUrl=queue_url,
             MaxNumberOfMessages=to_receive,
-            WaitTimeSeconds=WAIT_TIME_SECONDS,
-            VisibilityTimeout=SHORT_VISIBILITY_TIMEOUT
+            WaitTimeSeconds=WAIT_TIME_SECONDS
         )
 
         msgs = resp.get("Messages", []) or []
@@ -102,9 +98,14 @@ class AmazonSQSConnectionService(QueueConnectionService):
             return all_msgs
 
         for m in msgs:
+            self._change_message_visibility(sqs, queue_url, m)
             all_msgs.append(m)
 
         return all_msgs
+
+    def change_message_visibility(self, sqs, queue_url:str, messages: list[Any], visibility_timeout:int=LONG_VISIBILITY_TIMEOUT):
+        for m in messages:
+            self._change_message_visibility(sqs,queue_url,m,visibility_timeout)
 
     def ack_messages(self, config:BrokerAmazonConnectionConfig, queue_id:str, messages: list[Any])-> list[dict]:
 
@@ -128,3 +129,14 @@ class AmazonSQSConnectionService(QueueConnectionService):
                 print(f" Errore eliminazione messaggio  MessageId={mid} Error={e}")
 
         return deleted_msgs
+
+    def _change_message_visibility(self, sqs, queue_url, m, visibility_timeout:int=LONG_VISIBILITY_TIMEOUT):
+        try:
+            sqs.change_message_visibility(
+                QueueUrl=queue_url,
+                ReceiptHandle=m['ReceiptHandle'],
+                VisibilityTimeout=visibility_timeout
+            )
+        except ClientError as e:
+            mid = m.get("MessageId", "unknown")
+            raise QsmithAppException(f" Errore modifica visibilità messaggio  MessageId={mid} Error={e}")

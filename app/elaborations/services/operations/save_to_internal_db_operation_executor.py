@@ -14,7 +14,13 @@ class SaveInternalDbOperationExecutor(OperationExecutor):
     def execute(self, session:Session,  operation_id:str, cfg: SaveInternalDBConfigurationOperationDto, data:list[dict])->ExecutionResultDto:
         engine = create_engine(url_from_env())
 
-        DatabaseTableWriter.insert_rows(engine, cfg.table_name, data)
+        sample_row = {}
+        for d in data:
+            for key, value in d.items():
+                sample_row[key] = value
+
+        table = DatabaseTableWriter.ensure_table_exists(engine, cfg.table_name, sample_row)
+        DatabaseTableWriter.insert_rows(engine, table, data)
 
         message = f"Created {len(data)} rows in {cfg.table_name} table"
 

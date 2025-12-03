@@ -2,6 +2,7 @@ from brokers.models.connections.broker_connection_config_types import BrokerConn
 from brokers.services.alembic.broker_connection_service import load_broker_connection
 from brokers.services.connections.queue.queue_connection_service_factory import QueueConnectionServiceFactory
 from brokers.services.elaborations.queue_reader_thread import QueueReaderThread
+from brokers.services.elaborations.queue_writer_thread import QueueWriterThread
 
 threads: dict[str, QueueReaderThread] = {}
 
@@ -28,6 +29,14 @@ class AsyncQueueService:
                 thread.join()
             del threads[queue_id]
         return {"status":"stopped"}
+
+    @classmethod
+    def publish_from_table(cls, broker_id:str, queue_id:str, export_table_name:str)->dict:
+        connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
+        service = QueueConnectionServiceFactory.get_service(connection_config)
+        thread = QueueWriterThread(export_table_name,queue_id, service, connection_config)
+        thread.start()
+        return {"status":"started"}
 
 
 
