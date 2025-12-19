@@ -1,7 +1,10 @@
+import base64
 from abc import abstractmethod, ABC
 from datetime import date, datetime, time
 from decimal import Decimal
 from uuid import UUID
+
+from idna import IDNAError
 
 
 class TypeConverter(ABC):
@@ -14,9 +17,9 @@ class TypeConverter(ABC):
         pass
 
 
-class JsonTypeConverter(TypeConverter):
+class NumberTypeConverter(TypeConverter):
     def canHandle(self, obj) -> bool:
-        return isinstance(obj, (int, float, str, bool))
+        return isinstance(obj, (int, float))
     def convert(self, obj):
         return obj
 
@@ -55,12 +58,11 @@ class ByteTypeConverter(TypeConverter):
     def convert(self, obj):
         try:
             return obj.decode("utf-8")
-        except Exception:
-            import base64
+        except IDNAError:
             return base64.b64encode(obj).decode("utf-8")
 
 TYPE_CONVERTERS: list[TypeConverter] = [
-        JsonTypeConverter(),
+        NumberTypeConverter(),
         DateTypeConverter(),
         TimeTypeConverter(),
         DecimalTypeConverter(),
