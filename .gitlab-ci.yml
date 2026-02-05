@@ -1,0 +1,21 @@
+include:
+  - project: "devops/gitlab-ci-templates"
+    ref: master
+    file: docker.gitlab-ci.yml
+
+default:
+  tags:
+    - docker
+
+stages:
+  - build
+
+build:
+  stage: build
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+  variables:
+    IMAGE: akeron-qsmith:coll
+    REGISTRY: aknregistry.azurecr.io
+    DOCKERFILE: ./docker/Dockerfile
+  extends: .build-docker-image
