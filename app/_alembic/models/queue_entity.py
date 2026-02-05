@@ -1,18 +1,13 @@
-from pydantic import BaseModel
+from sqlalchemy import Column, Text, JSON
 
-from _alembic.constants import SCHEMA
 from _alembic.models import Base
-from sqlalchemy import Column, Text, Numeric, Boolean
+from _alembic.models.code_desc_entity import CodeDescEntity
 
 
-class QueueEntity(Base):
+class QueueEntity(Base,CodeDescEntity):
     __tablename__ = "queues"
-    __table_args__ = {"schema": SCHEMA}
-    id = Column(Text, primary_key=True)
     broker_id = Column(Text, nullable=False)
-    code = Column(Text, nullable=False)
-    description = Column(Text, nullable=True)
-    configuration_json = Column(Text, nullable=False)
+    configuration_json = Column(JSON, nullable=False)
 
 
 

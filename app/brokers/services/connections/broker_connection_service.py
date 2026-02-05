@@ -6,12 +6,9 @@ from brokers.models.dto.create_queue_dto import CreateQueueDto
 
 class BrokerConnectionService(ABC):
     @abstractmethod
-    def create_queue(self, connection_config:BrokerConnectionConfigTypes, q: CreateQueueDto):
+    def create_queue(self, broker_id:str, connection_config:BrokerConnectionConfigTypes, q: CreateQueueDto) -> dict[str, str]:
         pass
 
     @abstractmethod
-    def delete_queue(self, connection_config:BrokerConnectionConfigTypes, queue_url: str):
-        pass
-
-    def list_queues(self, connection_config:BrokerConnectionConfigTypes):
+    def delete_queue(self, connection_config:BrokerConnectionConfigTypes, queue_id: str)->dict[str, str]:
         pass

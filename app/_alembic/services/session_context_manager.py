@@ -7,7 +7,7 @@ from _alembic.services.session_factory import SessionFactory
 def managed_session():
     session = SessionFactory.create_session()
     try:
-        with session.begin():
+        with session.begin():  # gestisce commit/rollback automatici
             yield session
     finally:
         session.close()

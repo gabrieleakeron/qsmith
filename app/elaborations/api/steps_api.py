@@ -1,5 +1,3 @@
-import json
-
 from fastapi import APIRouter
 
 from _alembic.models.step_entity import StepEntity
@@ -13,39 +11,68 @@ router = APIRouter(prefix="/elaborations")
 @router.post("/step")
 async def insert_step_api(dto:CreateStepDto):
     with managed_session() as session:
-        step_id = StepService.insert(
+        entity = StepEntity()
+        entity.code = dto.code,
+        entity.description = dto.description,
+        entity.step_type = dto.cfg.stepType,
+        entity.configuration_json = dto.cfg.model_dump()
+        step_id = StepService().insert(
             session,
-            StepEntity(
-                code=dto.code,
-                description=dto.description,
-                step_type=dto.cfg.stepType,
-                configuration_json=json.dumps(dto.cfg, ensure_ascii=True)
-            )
+            entity
         )
+    return {"id":step_id, "message": "Step added"}
 
+@router.put("/step")
+async def insert_step_api(dto:CreateStepDto):
+    with managed_session() as session:
+        entity = StepEntity()
+        entity.code = dto.code,
+        entity.description = dto.description,
+        entity.step_type = dto.cfg.stepType,
+        entity.configuration_json = dto.cfg.model_dump()
+        step_id = StepService().insert(
+            session,
+            entity
+        )
     return {"id":step_id, "message": "Step added"}
 
 
 @router.get("/step")
 async def find_all_step_api():
     with managed_session() as session:
-        steps = StepService.get_all(session)
-        return steps
+        steps = StepService().get_all(session)
+        result = []
+        for step in steps:
+            result.append({
+                "id": step.id,
+                "code": step.code,
+                "description": step.description,
+                "step_type": step.step_type,
+                "configuration_json": step.configuration_json
+            })
+        return result
 
 @router.get("/step/{_id}")
 async def find_step_by_id_api(_id:str):
     with managed_session() as session:
-        step = StepService.get_by_id(session, _id)
+        step = StepService().get_by_id(session, _id)
         if not step:
             raise QsmithAppException(f"No step found with id [ {_id} ]")
-        return step
+        return {
+                "id": step.id,
+                "code": step.code,
+                "description": step.description,
+                "step_type": step.step_type,
+                "configuration_json": step.configuration_json
+            }
 
 @router.delete("/step/{_id}")
-async def delete_step_by_id_api(_id: str):
+async def delete_step_by_id_api(_id:str):
     with managed_session() as session:
-        result = StepService.delete_by_id(session, _id)
-        if result == 0:
+        step = StepService().get_by_id(session, _id)
+        if not step:
             raise QsmithAppException(f"No step found with id [ {_id} ]")
-        return {"message": f"{result} step(s) deleted"}
+        StepService().delete_by_id(session, _id)
+        return {"message": f"Step with id [ {_id} ] deleted successfully"}
 
 

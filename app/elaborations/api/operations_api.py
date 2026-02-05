@@ -1,5 +1,3 @@
-import json
-
 from fastapi import APIRouter
 
 from _alembic.models.operation_entity import OperationEntity
@@ -13,37 +11,53 @@ router = APIRouter(prefix="/elaborations")
 @router.post("/operation")
 async def insert_operation_api(dto:CreateOperationDto):
     with managed_session() as session:
-        step_id = OperationService.insert(
+        entity = OperationEntity()
+        entity.code = dto.code,
+        entity.description = dto.description,
+        entity.operation_type = dto.cfg.operationType,
+        entity.configuration_json = dto.cfg.model_dump()
+        op_id = OperationService().insert(
             session,
-            OperationEntity(
-                code=dto.code,
-                description=dto.description,
-                operation_type=dto.cfg.operationType,
-                configuration_json=json.dumps(dto.cfg, ensure_ascii=True)
-            )
+            entity
         )
-
-    return {"id":step_id, "message": "Operation added"}
+    return {"id":op_id, "message": "Operation added"}
 
 
 @router.get("/operation")
 async def find_all_operation_api():
     with managed_session() as session:
-        steps = OperationService.get_all(session)
-        return steps
+        ops = OperationService().get_all(session)
+        result= []
+        for op in ops:
+            result.append({
+                "id": op.id,
+                "code": op.code,
+                "description": op.description,
+                "operation_type": op.operation_type,
+                "configuration_json": op.configuration_json
+            })
+        return result
+
 
 @router.get("/operation/{_id}")
 async def find_operation_by_id_api(_id:str):
     with managed_session() as session:
-        step = OperationService.get_by_id(session, _id)
-        if not step:
+        op = OperationService().get_by_id(session, _id)
+        if not op:
             raise QsmithAppException(f"No Operation found with id [ {_id} ]")
-        return step
+        return {
+                "id": op.id,
+                "code": op.code,
+                "description": op.description,
+                "operation_type": op.operation_type,
+                "configuration_json": op.configuration_json
+            }
+
 
 @router.delete("/operation/{_id}")
 async def delete_operation_by_id_api(_id: str):
     with managed_session() as session:
-        result = OperationService.delete_by_id(session, _id)
+        result = OperationService().delete_by_id(session, _id)
         if result == 0:
             raise QsmithAppException(f"No Operation found with id [ {_id} ]")
         return {"message": f"{result} Operation(s) deleted"}

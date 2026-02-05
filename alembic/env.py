@@ -32,6 +32,13 @@ target_metadata = metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+def include_object(object, name, type_, reflected, compare_to):
+    # includi solo tabelle nello schema 'transformation'
+    if type_ == "table" and object.schema != SCHEMA:
+        return False
+    else:
+        return True
+
 def create_schema_if_not_exist():
     url = url_from_env()
     print(f"Creating schema '{SCHEMA}' if not exists in database '{url}'")
@@ -64,7 +71,8 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         version_table_schema=SCHEMA,
-        include_schemas=True
+        include_schemas=True,
+        include_object=include_object
     )
     with context.begin_transaction():
         context.run_migrations()
@@ -87,7 +95,8 @@ def run_migrations_online() -> None:
             connection=connection,
             target_metadata=target_metadata,
             version_table_schema=SCHEMA,
-            include_schemas=True
+            include_schemas=True,
+            include_object=include_object
         )
         with context.begin_transaction():
             context.run_migrations()

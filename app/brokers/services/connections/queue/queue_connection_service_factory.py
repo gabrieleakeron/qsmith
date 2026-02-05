@@ -1,7 +1,10 @@
 from brokers.models.connections.amazon.broker_amazon_connection_config import BrokerAmazonConnectionConfig
 from brokers.models.connections.amazon.sqs_amazon_connection_config import SQSAmazonConnectionConfig
 from brokers.models.connections.connection_config import ConnectionConfig
+from brokers.models.connections.elastiqmq.broker_elasticmq_connection_config import BrokerElasticmqConnectionConfig
+from brokers.models.connections.elastiqmq.sqs_elasticmq_connection_config import SQSElasticmqConnectionConfig
 from brokers.services.connections.queue.amazon_sqs_connection_service import AmazonSQSConnectionService
+from brokers.services.connections.queue.elasticmq_sqs_connection_service import ElasticmqSQSConnectionService
 from brokers.services.connections.queue.queue_connection_service import QueueConnectionService
 
 
@@ -9,7 +12,9 @@ class QueueConnectionServiceFactory:
 
     _CONNECTOR_MAPPING: dict[type[ConnectionConfig], type[QueueConnectionService]] = {
         SQSAmazonConnectionConfig: AmazonSQSConnectionService,
-        BrokerAmazonConnectionConfig:AmazonSQSConnectionService
+        BrokerAmazonConnectionConfig:AmazonSQSConnectionService,
+        BrokerElasticmqConnectionConfig: ElasticmqSQSConnectionService,
+        SQSElasticmqConnectionConfig:ElasticmqSQSConnectionService
     }
 
     @classmethod

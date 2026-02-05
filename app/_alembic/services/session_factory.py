@@ -6,9 +6,12 @@ from _alembic.services.alembic_config_service import url_from_env
 
 
 class SessionFactory:
+    _engines = {}
 
     @staticmethod
     def create_session() -> Session:
-        engine = create_engine(url_from_env(), pool_pre_ping=True)
-        session_local = sessionmaker(bind=engine)
-        return session_local()
+        if not SessionFactory._engines:
+            SessionFactory._engines['default'] = create_engine(url_from_env(), pool_pre_ping=True)
+        engine = SessionFactory._engines['default']
+        SessionFactory.SessionLocal = sessionmaker(bind=engine)
+        return SessionFactory.SessionLocal()

@@ -21,12 +21,14 @@
     
     4. Installazione delle dipendenze 
     - pip install -r requirements.txt
+    - docker compose -f .\docker-compose-compile-requirements.yml run --rm compiler
 
 ### RUN LOCALE
     1. Assicurarsi di aver attivato il VENV 
         - venv\Scripts\activate 
     2. Avvio server fastapi
-        - python -m fastapi dev --port 9082  
+        - cd src
+        - python -m fastapi dev --port xxxx 
 
 ### DOCKER
     CREAZIONE E AVVIO AMBIENTE DOCKER CONTAINER
