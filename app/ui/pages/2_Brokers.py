@@ -465,119 +465,123 @@ else:
 col_left, col_right = st.columns([1, 4], gap="medium")
 
 with col_left:
-    st.subheader("Brokers")
+    st.subheader("Brokers list")
 
-    st.markdown('<div id="brokers-list">', unsafe_allow_html=True)
-    for idx, broker_item in enumerate(brokers):
-        broker_id = broker_item.get("id")
-        broker_description = broker_item.get("description", "No name")
-        is_selected = broker_id == st.session_state.get("selected_broker_id")
-        with st.container(border=True):
-            row_cols = st.columns([2, 6, 3, 3], gap="small", vertical_alignment="center")
-            with row_cols[0]:
-                select_key = f"broker_select_{broker_id or idx}"
-                st.session_state[select_key] = is_selected
-                st.checkbox(
-                    "",
-                    key=select_key,
-                    on_change=_select_broker,
-                    args=(broker_id,),
-                    label_visibility="hidden",
-                )
-            with row_cols[1]:
-                st.write(broker_description)
-            with row_cols[2]:
-                if st.button(
-                    "",
-                    key=f"edit_broker_btn_{idx}",
-                    type="secondary",
-                    use_container_width=True,
-                    help="Edit broker",
-                    icon=":material/settings:",
-                ):
-                    _edit_broker_dialog(broker_item)
-            with row_cols[3]:
-                if st.button(
-                    "",
-                    key=f"delete_broker_btn_{idx}",
-                    type="secondary",
-                    use_container_width=True,
-                    help="Delete broker",
-                    icon=":material/delete:",
-                ):
-                    _delete_broker_dialog(broker_item)
-    st.markdown("</div>", unsafe_allow_html=True)
-    
-    if st.button("Add broker connection", key="add_broker_btn", help="Add broker", use_container_width=True, icon=":material/add:"):
-        _add_broker_dialog()
+    with st.container(border=True):
+        st.markdown('<div id="brokers-list">', unsafe_allow_html=True)
+        for idx, broker_item in enumerate(brokers):
+            broker_id = broker_item.get("id")
+            broker_description = broker_item.get("description", "No name")
+            is_selected = broker_id == st.session_state.get("selected_broker_id")
+            with st.container(border=True):
+                row_cols = st.columns([2, 6, 3, 3], gap="small", vertical_alignment="center")
+                with row_cols[0]:
+                    select_key = f"broker_select_{broker_id or idx}"
+                    st.session_state[select_key] = is_selected
+                    st.checkbox(
+                        "",
+                        key=select_key,
+                        on_change=_select_broker,
+                        args=(broker_id,),
+                        label_visibility="hidden",
+                    )
+                with row_cols[1]:
+                    st.write(broker_description)
+                with row_cols[2]:
+                    if st.button(
+                        "",
+                        key=f"edit_broker_btn_{idx}",
+                        type="secondary",
+                        use_container_width=True,
+                        help="Edit broker",
+                        icon=":material/settings:",
+                    ):
+                        _edit_broker_dialog(broker_item)
+                with row_cols[3]:
+                    if st.button(
+                        "",
+                        key=f"delete_broker_btn_{idx}",
+                        type="secondary",
+                        use_container_width=True,
+                        help="Delete broker",
+                        icon=":material/delete:",
+                    ):
+                        _delete_broker_dialog(broker_item)
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+        if st.button("Add broker connection", key="add_broker_btn", help="Add broker", use_container_width=True, icon=":material/add:"):
+            _add_broker_dialog()
 
 selected_broker_id = st.session_state.get("selected_broker_id")
 broker = next((b for b in brokers if b.get("id") == selected_broker_id), None)
 
 with col_right:
+    st.subheader("Queues list")
+
     if broker:
         _load_queues(broker.get("id"))
         queues = st.session_state.get("queues", [])
     else:
         queues = []
 
-    col_subHeader, col_refresh, col_add = st.columns([2, 1, 1], gap="large")
-    with col_subHeader:
-        st.subheader("Queues")
-    with col_refresh:
-        st.button(
-            "Refresh",
-            key="refresh_queues_btn",
-            on_click=lambda: _load_queues(selected_broker_id, force=True),
-            use_container_width=True,
-            icon=":material/refresh:",
-        )
-    with col_add:
-        if st.button(
-            "Add queue",
-            key="add_queue_btn",
-            use_container_width=True,
-            disabled=not bool(broker),
-            icon=":material/add:",
-        ):
-            _add_queue_dialog(broker)
+    with st.container(border=True):
+        bar_cols = st.columns([2, 1, 1], gap="large", vertical_alignment="center")
+        with bar_cols[0]:
+            loaded_at = st.session_state.get("queues_loaded_at")
+            timestamp_label = _format_last_update(loaded_at) if loaded_at else "-"
+            st.caption(f"Aggiornate: {timestamp_label}")
+        with bar_cols[1]:
+            st.button(
+                "Refresh",
+                key="refresh_queues_btn",
+                on_click=lambda: _load_queues(selected_broker_id, force=True),
+                use_container_width=True,
+                icon=":material/refresh:",
+            )
+        with bar_cols[2]:
+            if st.button(
+                "Add queue",
+                key="add_queue_btn",
+                use_container_width=True,
+                disabled=not bool(broker),
+                icon=":material/add:",
+            ):
+                _add_queue_dialog(broker)
 
-    if not queues:
-        st.info("Nessuna queue configurata.")
-    else:
-        for q in queues:
-            with st.container(border=True):
-                row_cols = st.columns([4, 2, 2, 1, 1], gap="small", vertical_alignment="center")
-                queue_label = q.get("description") or q.get("code") or "-"
-                row_cols[0].write(queue_label)
-                with row_cols[1]:
-                    st.write("Messages sent: "+_format_count(q.get("messages_sent")))
-                with row_cols[2]:
-                    st.write("Messages received: "+_format_count(q.get("messages_received")))
-                with row_cols[3]:
-                    if st.button(
-                        "",
-                        key=f"queue_settings_{q.get('id')}",
-                        type="secondary",
-                        use_container_width=True,
-                        help="Settings",
-                        icon=":material/settings:",
-                    ):
-                        _queue_settings_dialog(selected_broker_id, q.get("id"))
-                with row_cols[4]:
-                    if st.button(
-                        "",
-                        key=f"queue_delete_{q.get('id')}",
-                        type="secondary",
-                        use_container_width=True,
-                        help="Delete",
-                        icon=":material/delete:",
-                    ):
-                        _delete_queue_dialog(selected_broker_id, q)
-     
-    loaded_at = st.session_state.get("queues_loaded_at")
-    timestamp_label = _format_last_update(loaded_at) if loaded_at else "-"
-    st.caption(f"Aggiornate: {timestamp_label}")
+        if not queues:
+            st.info("Nessuna queue configurata.")
+        else:
+            for q in queues:
+                with st.container(border=True):
+                    row_cols = st.columns([4, 2, 2, 1, 1], gap="small", vertical_alignment="center")
+                    queue_label = q.get("description") or q.get("code") or "-"
+                    row_cols[0].write(queue_label)
+                    with row_cols[1]:
+                        st.write("Messages sent: " + _format_count(q.get("messages_sent")))
+                    with row_cols[2]:
+                        st.write("Messages received: " + _format_count(q.get("messages_received")))
+                    with row_cols[3]:
+                        if st.button(
+                            "",
+                            key=f"queue_settings_{q.get('id')}",
+                            type="secondary",
+                            use_container_width=True,
+                            help="Settings",
+                            icon=":material/settings:",
+                        ):
+                            _queue_settings_dialog(selected_broker_id, q.get("id"))
+                    with row_cols[4]:
+                        if st.button(
+                            "",
+                            key=f"queue_delete_{q.get('id')}",
+                            type="secondary",
+                            use_container_width=True,
+                            help="Delete",
+                            icon=":material/delete:",
+                        ):
+                            _delete_queue_dialog(selected_broker_id, q)
+
+    
 
 
    
