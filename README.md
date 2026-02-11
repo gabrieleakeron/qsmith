@@ -1,13 +1,10 @@
 ### SETUP INIZIALE
 
-## APPSMITH
-    - Copiare il file appsmith/docker-compose.yml nella cartella di destinazione
-    - Eseguire il comando docker-compose up -d nella cartella di destinazione
-    - Caricare il file appsmith/Qsmith.json tramite l'interfaccia web di appsmith
-
 ## ELASTIMQ
+    Contenitore delle code SQS in locale, per visualizzare la console web:
     - Copiare la cartella elasticmq nella cartella di destinazione
     - Eseguire il comando docker-compose up -d nella cartella di destinazione
+    - Verifica http://localhost:9325
 
 ## COMPILAZIONE AMBIENTE DI SVILUPPO LOCALE
     1. Creazione VENV
@@ -40,13 +37,6 @@
 
 ### OPENAPI JSON
     http://host:port/openapi.json
-
-### POSTMAN
-    - importare il file postman/collection.json
-
-### ELASTICMQ
-    Contenitore delle code SQS in locale, per visualizzare la console web:
-    - http://localhost:9325
 
 ### ALEMBIC
     - alembic revision --autogenerate -m "YYYYMMDDHH_NAU_XXX"

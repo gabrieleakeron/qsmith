@@ -13,23 +13,41 @@ from brokers.services.connections.broker_connection_service_factory import Broke
 from brokers.services.connections.queue.queue_connection_service_factory import QueueConnectionServiceFactory
 from brokers.services.elaborations.async_queue_service import AsyncQueueService
 from exceptions.app_exception import QsmithAppException
-from brokers.models.dto.configurations.queue_configuration_types import QueueConfigurationTypes
 router = APIRouter(prefix="/broker")
+
+
+def _queue_stats(connection_config: BrokerConnectionConfigTypes, queue_id: str) -> dict:
+    try:
+        service = QueueConnectionServiceFactory.get_service(connection_config)
+        return service.get_queue_metrics(connection_config, queue_id)
+    except Exception:
+        return {
+            "messages_sent": None,
+            "messages_received": None,
+            "last_update": None,
+        }
 
 
 @router.get("/{broker_id}/queue")
 async def find_all_queues_api(broker_id: str) -> list[dict]:
     with managed_session() as session:
         queues: list[QueueEntity] = QueueService().get_all_by_broker_id(session, broker_id)
+        connection_config = load_broker_connection(broker_id)
         results: list[dict] = []
         for queue in queues:
             cfg = convert_queue_configuration_types(queue.configuration_json)
-            results.append({
-            "id": queue.id,
-            "code": queue.code,
-            "description": queue.description,
-            "configurationQueue": cfg.model_dump()
-        })
+            stats = _queue_stats(connection_config, queue.id)
+            results.append(
+                {
+                    "id": queue.id,
+                    "code": queue.code,
+                    "description": queue.description,
+                    "configurationQueue": cfg.model_dump(),
+                    "messages_sent": stats.get("messages_sent"),
+                    "messages_received": stats.get("messages_received"),
+                    "last_update": stats.get("last_update"),
+                }
+            )
         return results
 
 

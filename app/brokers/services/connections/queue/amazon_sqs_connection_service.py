@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 from typing import Any
 
 import boto3
@@ -16,6 +17,25 @@ from exceptions.app_exception import QsmithAppException
 
 MAX_NUMBER_OF_MESSAGES = 10
 WAIT_TIME_SECONDS = 20
+
+
+def _safe_int(value: str | None) -> int | None:
+    if value is None:
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _timestamp_to_iso(value: str | None) -> str | None:
+    if value is None:
+        return None
+    try:
+        ts = int(value)
+    except (TypeError, ValueError):
+        return None
+    return datetime.fromtimestamp(ts, tz=timezone.utc).isoformat()
 
 class AmazonSQSConnectionService(QueueConnectionService):
 
@@ -129,6 +149,23 @@ class AmazonSQSConnectionService(QueueConnectionService):
                 print(f" Errore eliminazione messaggio  MessageId={mid} Error={e}")
 
         return deleted_msgs
+
+    def get_queue_metrics(self, config: BrokerAmazonConnectionConfig, queue_id: str) -> dict[str, Any]:
+        sqs, queue_url = self.test_connection(config, queue_id)
+        resp = sqs.get_queue_attributes(
+            QueueUrl=queue_url,
+            AttributeNames=[
+                "ApproximateNumberOfMessages",
+                "ApproximateNumberOfMessagesNotVisible",
+                "LastModifiedTimestamp",
+            ],
+        )
+        attrs = resp.get("Attributes", {})
+        return {
+            "messages_sent": _safe_int(attrs.get("ApproximateNumberOfMessages")),
+            "messages_received": _safe_int(attrs.get("ApproximateNumberOfMessagesNotVisible")),
+            "last_update": _timestamp_to_iso(attrs.get("LastModifiedTimestamp")),
+        }
 
     def _change_message_visibility(self, sqs, queue_url, m, visibility_timeout:int=LONG_VISIBILITY_TIMEOUT):
         try:

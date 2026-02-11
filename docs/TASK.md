@@ -9,12 +9,12 @@
 ---
 
 ## QSM-008 - Brokers&Queue
-- [] il caricamento dei brokers deve avvenire subito
-- [] alla selezione di un broker si devono caricare le code con le info necessarie:
+- [x] il caricamento dei brokers deve avvenire subito
+- [x] alla selezione di un broker si devono caricare le code con le info necessarie:
      - numero di messaggi inviati
      - numero di messaggi ricevuti
      - data ultimo aggiornamento
-- [] aggiungere un pulsante di refresh per aggiornare i dati delle code
+- [x] aggiungere un pulsante di refresh per aggiornare i dati delle code
 
 
 ---

@@ -56,6 +56,13 @@ class QueueReaderConnectionServiceMock(QueueConnectionService):
                 if m['ReceiptHandle'] == msg['ReceiptHandle']:
                     m['time']=time.time()+LONG_VISIBILITY_TIMEOUT
 
+    def get_queue_metrics(self, broker_connection_config: BrokerConnectionConfigTypes, queue_id: str) -> dict[str, Any]:
+        return {
+            "messages_sent": None,
+            "messages_received": None,
+            "last_update": None,
+        }
+
 class QueueWriterConnectionServiceMock(QueueConnectionService):
 
     msgs: list[dict] = []
@@ -80,6 +87,13 @@ class QueueWriterConnectionServiceMock(QueueConnectionService):
     def change_message_visibility(self, sqs, queue_url: str, messages: list[Any],
                                   visibility_timeout: int = LONG_VISIBILITY_TIMEOUT):
         raise NotImplementedError()
+
+    def get_queue_metrics(self, broker_connection_config: BrokerConnectionConfigTypes, queue_id: str) -> dict[str, Any]:
+        return {
+            "messages_sent": None,
+            "messages_received": None,
+            "last_update": None,
+        }
 
 
 def test_queue_service(alembic_container):
