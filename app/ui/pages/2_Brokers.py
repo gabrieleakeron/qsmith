@@ -1,7 +1,6 @@
 import streamlit as st
 
 from brokers.components.brokers_container import render_brokers_container
-from brokers.components.queues_container import render_queues_container
 from brokers.services.data_loader_service import load_brokers
 
 load_brokers()
@@ -20,13 +19,7 @@ if brokers:
 else:
     st.session_state["selected_broker_id"] = None
 
-col_left, col_right = st.columns([1, 4], gap="medium")
+st.subheader("Brokers list")
+st.divider()
 
-with col_left:
-    render_brokers_container(brokers)
-
-selected_broker_id = st.session_state.get("selected_broker_id")
-broker = next((item for item in brokers if item.get("id") == selected_broker_id), None)
-
-with col_right:
-    render_queues_container(broker, selected_broker_id)
+render_brokers_container(brokers)

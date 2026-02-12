@@ -13,83 +13,108 @@ def _open_queue_page(broker_id: str | None, queue_id: str | None):
     if not broker_id or not queue_id:
         st.error("Impossibile aprire il dettaglio della queue.")
         return
-    st.query_params["broker_id"] = broker_id
-    st.query_params["queue_id"] = queue_id
-    st.switch_page("pages/2_Queues.py")
+    st.session_state["selected_broker_id"] = broker_id
+    st.session_state["nav_broker_id"] = broker_id
+    st.session_state["nav_queue_id"] = queue_id
+    st.switch_page("pages/2_Queue_details.py")
 
 
-def render_queues_container(broker: dict | None, selected_broker_id: str | None):
-    st.subheader("Queues list")
+def render_queues_container(
+    brokers: list[dict],
+    broker_by_id: dict[str, dict],
+    selected_broker_id: str | None,
+) -> str | None:
+    broker_ids = [broker_item.get("id") for broker_item in brokers if broker_item.get("id")]
+    if not broker_ids:
+        st.info("Nessun broker configurato.")
+        return None
 
+    bar_cols = st.columns([1, 3, 3, 1, 1], gap="small", vertical_alignment="center")
+    with bar_cols[0]:
+        st.write("Filtra per broker:")
+    with bar_cols[1]:
+        selected_broker_id = st.selectbox(
+            "Broker",
+            options=broker_ids,
+            format_func=lambda broker_id: broker_by_id[broker_id].get("description")
+            or broker_by_id[broker_id].get("code")
+            or broker_id,
+            key="queues_filter_broker_id",
+            label_visibility="collapsed",
+        )
+
+    broker = broker_by_id.get(selected_broker_id)
     if broker:
         load_queues(broker.get("id"))
         queues = st.session_state.get("queues", [])
     else:
         queues = []
 
-    with st.container(border=True):
-        bar_cols = st.columns([2, 1, 1], gap="large", vertical_alignment="center")
-        with bar_cols[0]:
-            loaded_at = st.session_state.get("queues_loaded_at")
-            timestamp_label = format_last_update(loaded_at) if loaded_at else "-"
-            st.caption(f"Aggiornate: {timestamp_label}")
-        with bar_cols[1]:
-            st.button(
-                "Refresh",
-                key="refresh_queues_btn",
-                on_click=lambda: load_queues(selected_broker_id, force=True),
-                use_container_width=True,
-                icon=":material/refresh:",
-            )
-        with bar_cols[2]:
-            if st.button(
-                "Add queue",
-                key="add_queue_btn",
-                use_container_width=True,
-                disabled=not bool(broker),
-                icon=":material/add:",
-            ):
-                add_queue_dialog(broker)
+    with bar_cols[3]:
+        st.button(
+            "Refresh",
+            key="refresh_queues_btn",
+            on_click=lambda: load_queues(selected_broker_id, force=True),
+            use_container_width=True,
+            icon=":material/refresh:",
+        )
+    with bar_cols[4]:
+        if st.button(
+            "Add queue",
+            key="add_queue_btn",
+            use_container_width=True,
+            disabled=not bool(broker),
+            icon=":material/add:",
+        ):
+            add_queue_dialog(broker)
 
-        if not queues:
-            st.info("Nessuna queue configurata.")
-        else:
-            for queue_item in queues:
-                with st.container(border=True):
-                    row_cols = st.columns([4, 2, 2, 1, 1, 1], gap="small", vertical_alignment="center")
-                    queue_label = queue_item.get("description") or queue_item.get("code") or "-"
-                    row_cols[0].write(queue_label)
-                    with row_cols[1]:
-                        st.write("Messages sent: " + format_count(queue_item.get("messages_sent")))
-                    with row_cols[2]:
-                        st.write("Messages received: " + format_count(queue_item.get("messages_received")))
-                    with row_cols[3]:
-                        if st.button(
-                            "",
-                            key=f"queue_open_{queue_item.get('id')}",
-                            type="secondary",
-                            use_container_width=True,
-                            help="Open queue page",
-                            icon=":material/open_in_new:",
-                        ):
-                            _open_queue_page(selected_broker_id, queue_item.get("id"))
-                    with row_cols[4]:
-                        if st.button(
-                            "",
-                            key=f"queue_settings_{queue_item.get('id')}",
-                            type="secondary",
-                            use_container_width=True,
-                            help="Settings",
-                            icon=":material/settings:",
-                        ):
-                            queue_settings_dialog(selected_broker_id, queue_item.get("id"))
-                    with row_cols[5]:
-                        if st.button(
-                            "",
-                            key=f"queue_delete_{queue_item.get('id')}",
-                            type="secondary",
-                            use_container_width=True,
-                            help="Delete",
-                            icon=":material/delete:",
-                        ):
-                            delete_queue_dialog(selected_broker_id, queue_item)
+    if not queues:
+        st.info("Nessuna queue configurata.")
+    else:
+        for queue_item in queues:
+            with st.container(border=True):
+                row_cols = st.columns([4, 2, 2, 1, 1, 1], gap="small", vertical_alignment="center")
+                queue_label = queue_item.get("description") or queue_item.get("code") or "-"
+                row_cols[0].write(queue_label)
+                with row_cols[1]:
+                    st.write("Messages sent: " + format_count(queue_item.get("messages_sent")))
+                with row_cols[2]:
+                    st.write("Messages received: " + format_count(queue_item.get("messages_received")))
+                with row_cols[3]:
+                    if st.button(
+                        "",
+                        key=f"queue_open_{queue_item.get('id')}",
+                        type="secondary",
+                        use_container_width=True,
+                        help="Open queue page",
+                        icon=":material/open_in_new:",
+                    ):
+                        _open_queue_page(selected_broker_id, queue_item.get("id"))
+                with row_cols[4]:
+                    if st.button(
+                        "",
+                        key=f"queue_settings_{queue_item.get('id')}",
+                        type="secondary",
+                        use_container_width=True,
+                        help="Settings",
+                        icon=":material/settings:",
+                    ):
+                        queue_settings_dialog(selected_broker_id, queue_item.get("id"))
+                with row_cols[5]:
+                    if st.button(
+                        "",
+                        key=f"queue_delete_{queue_item.get('id')}",
+                        type="secondary",
+                        use_container_width=True,
+                        help="Delete",
+                        icon=":material/delete:",
+                    ):
+                        delete_queue_dialog(selected_broker_id, queue_item)
+
+    loaded_at = st.session_state.get("queues_loaded_at")
+    timestamp_label = format_last_update(loaded_at) if loaded_at else "-"
+    footer_cols = st.columns([6, 1], gap="small", vertical_alignment="center")
+    with footer_cols[1]:
+        st.caption(f"Aggiornate: {timestamp_label}")
+
+    return selected_broker_id

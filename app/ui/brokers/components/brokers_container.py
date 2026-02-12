@@ -5,84 +5,72 @@ from brokers.components.dialogs import (
     delete_broker_dialog,
     edit_broker_dialog,
 )
+from brokers.services.data_loader_service import get_configured_queues_count
 
 
-def select_broker(broker_id: str):
+def _open_queues_page(broker_id: str | None):
+    if not broker_id:
+        st.error("Impossibile aprire la lista queue.")
+        return
     st.session_state["selected_broker_id"] = broker_id
+    st.session_state["queues_filter_broker_id"] = broker_id
+    st.session_state["nav_broker_id"] = broker_id
+    st.switch_page("pages/2_Queues.py")
 
 
 def render_brokers_container(brokers: list[dict]):
-    st.subheader("Brokers list")
-    with st.container(border=True):
-        st.markdown(
-            """
-<style>
-#brokers-list [data-testid="stCheckbox"] {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    min-height: 2.5rem;
-}
-#brokers-list [data-testid="stCheckbox"] > label {
-    margin: 0 !important;
-    padding: 0 !important;
-    align-items: center;
-    height: 100%;
-}
-#brokers-list [data-testid="stCheckbox"] row-widget {
-    margin-top: 0 !important;
-}
-</style>
-""",
-            unsafe_allow_html=True,
-        )
-        st.markdown('<div id="brokers-list">', unsafe_allow_html=True)
-        for idx, broker_item in enumerate(brokers):
-            broker_id = broker_item.get("id")
-            broker_description = broker_item.get("description", "No name")
-            is_selected = broker_id == st.session_state.get("selected_broker_id")
-            with st.container(border=True):
-                row_cols = st.columns([2, 6, 3, 3], gap="small", vertical_alignment="center")
-                with row_cols[0]:
-                    select_key = f"broker_select_{broker_id or idx}"
-                    st.session_state[select_key] = is_selected
-                    st.checkbox(
-                        "",
-                        key=select_key,
-                        on_change=select_broker,
-                        args=(broker_id,),
-                        label_visibility="hidden",
-                    )
-                with row_cols[1]:
-                    st.write(broker_description)
-                with row_cols[2]:
-                    if st.button(
-                        "",
-                        key=f"edit_broker_btn_{idx}",
-                        type="secondary",
-                        use_container_width=True,
-                        help="Edit broker",
-                        icon=":material/settings:",
-                    ):
-                        edit_broker_dialog(broker_item)
-                with row_cols[3]:
-                    if st.button(
-                        "",
-                        key=f"delete_broker_btn_{idx}",
-                        type="secondary",
-                        use_container_width=True,
-                        help="Delete broker",
-                        icon=":material/delete:",
-                    ):
-                        delete_broker_dialog(broker_item)
-        st.markdown("</div>", unsafe_allow_html=True)
 
+    action_cols = st.columns([10, 1], gap="small", vertical_alignment="center")
+    with action_cols[1]:
         if st.button(
-            "Add broker connection",
+            "",
             key="add_broker_btn",
-            help="Add broker",
+            help="Add broker connection",
             use_container_width=True,
             icon=":material/add:",
         ):
             add_broker_dialog()
 
+    for idx, broker_item in enumerate(brokers):
+        broker_id = broker_item.get("id")
+        broker_description = broker_item.get("description", "No name")
+        queues_count = get_configured_queues_count(broker_id)
+        with st.container(border=True):
+            row_cols = st.columns([4,6, 1, 1, 1], gap="small", vertical_alignment="center")
+            with row_cols[0]:
+                st.write(broker_description)
+
+            with row_cols[1]:
+                st.caption(
+                    f"queues: {queues_count}" if queues_count is not None else "queues: -"
+                )
+            with row_cols[2]:
+                if st.button(
+                    "",
+                    key=f"open_queues_btn_{idx}",
+                    type="secondary",
+                    use_container_width=True,
+                    help="Open queues",
+                    icon=":material/list_alt:",
+                ):
+                    _open_queues_page(broker_id)
+            with row_cols[3]:
+                if st.button(
+                    "",
+                    key=f"edit_broker_btn_{idx}",
+                    type="secondary",
+                    use_container_width=True,
+                    help="Edit broker",
+                    icon=":material/settings:",
+                ):
+                    edit_broker_dialog(broker_item)
+            with row_cols[4]:
+                if st.button(
+                    "",
+                    key=f"delete_broker_btn_{idx}",
+                    type="secondary",
+                    use_container_width=True,
+                    help="Delete broker",
+                    icon=":material/delete:",
+                ):
+                    delete_broker_dialog(broker_item)
