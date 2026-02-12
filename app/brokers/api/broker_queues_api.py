@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from _alembic.models.queue_entity import QueueEntity
 from _alembic.services.session_context_manager import managed_session
@@ -105,15 +105,21 @@ async def test_queue_connection_api(broker_id: str, queue_id: str):
 
 
 @router.get("/{broker_id}/queue/{queue_id}/messages")
-async def receive_messages_api(broker_id: str, queue_id: str, f: FindAllMessagesDto):
+async def receive_messages_api(
+    broker_id: str,
+    queue_id: str,
+    f: FindAllMessagesDto = Depends(),
+):
     connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
     service = QueueConnectionServiceFactory.get_service(connection_config)
     msgs = service.receive_messages(connection_config, queue_id=queue_id, max_messages=f.count)
     return msgs
 
 
-@router.delete("/{broker_id}/queue/{queue_id}/messages")
-async def ack_messages_api(broker_id: str, queue_id: str, d: QueueMessagesDto):
+@router.put("/{broker_id}/queue/{queue_id}/messages")
+async def ack_messages_api(broker_id: str, 
+                           queue_id: str, 
+                           d: QueueMessagesDto):
     connection_config: BrokerConnectionConfigTypes = load_broker_connection(broker_id)
     service = QueueConnectionServiceFactory.get_service(connection_config)
     return service.ack_messages(connection_config, queue_id=queue_id, messages=d.messages)

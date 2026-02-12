@@ -14,18 +14,17 @@ def load_brokers(force: bool = False):
             st.error("Errore caricamento broker")
 
 
-def load_queues(broker_id: str | None, force: bool = False):
+def load_queues(broker_id: str | None):
     if not broker_id:
         return
-    if force or st.session_state.get("queues_for_broker_id") != broker_id:
-        try:
-            queues = api_get(f"/broker/{broker_id}/queue")
-            st.session_state["queues"] = queues
-            st.session_state["queues_for_broker_id"] = broker_id
-            st.session_state["queues_loaded_at"] = datetime.now()
-        except Exception:
-            st.session_state["queues"] = []
-            st.error("Errore caricamento code")
+    try:
+        queues = api_get(f"/broker/{broker_id}/queue")
+        st.session_state["queues"] = queues
+        st.session_state["queues_for_broker_id"] = broker_id
+        st.session_state["queues_loaded_at"] = datetime.now()
+    except Exception:
+        st.session_state["queues"] = []
+        st.error("Errore caricamento code")
 
 
 def get_configured_queues_count(broker_id: str | None) -> int | None:

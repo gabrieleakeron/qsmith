@@ -280,7 +280,7 @@ def add_queue_dialog(broker_item: dict):
         st.error("Errore salvataggio queue")
         return
 
-    load_queues(broker_id, force=True)
+    load_queues(broker_id)
     st.rerun()
 
 
@@ -357,7 +357,7 @@ def delete_queue_dialog(broker_id: str, queue_item: dict):
                 st.error("Errore cancellazione queue")
                 return
 
-            load_queues(broker_id, force=True)
+            load_queues(broker_id)
             st.rerun()
     with col_cancel:
         st.button("Annulla", key=f"delete_queue_cancel_{queue_id}")

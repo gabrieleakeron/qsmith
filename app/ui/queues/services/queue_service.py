@@ -1,6 +1,6 @@
 import streamlit as st
 
-from api_client import api_get, api_post
+from api_client import api_get, api_post, api_put
 
 
 def get_query_param(name: str) -> str | None:
@@ -56,6 +56,12 @@ def send_queue_messages(broker_id: str, queue_id: str, messages: list[object]) -
         {"messages": messages},
     )
 
+
+def receive_queue_messages(broker_id: str, queue_id: str, count: int = 10) -> list[dict]:
+    return api_get(f"/broker/{broker_id}/queue/{queue_id}/messages?count={count}")
+
+def receive_queue_messages_ack(broker_id: str, queue_id: str, messages:list[dict]) -> list[dict]:
+    return api_put(f"/broker/{broker_id}/queue/{queue_id}/messages", {"messages": messages})
 
 def load_json_arrays() -> list[dict]:
     return api_get("/data-source/json-array")

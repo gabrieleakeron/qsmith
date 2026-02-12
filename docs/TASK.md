@@ -16,14 +16,14 @@
      - data ultimo aggiornamento
 - [x] aggiungere un pulsante di refresh per aggiornare i dati delle code
 - [x] aggiunta\modifica broker
-- [x] aggiunta\modifica queue  
+- [x] aggiunta\modifica queue
 
 ---
 
 ## QSM-009 - Queues
 - [x] aggiunta sotto pagina per la gestione della singola coda (Queue)
 - [x] aggiungere pulsante per navigare alla pagina
-- [x] la pagina � composta da questi tab:
+- [x] la pagina e' composta da questi tab:
      - [x] test
      - [x] send messages
      - [x] receive messages
@@ -36,41 +36,41 @@
 
 ---
 
-## QSM-011 - Queue - Send messages 
-- [x] nella pagina Queue aggiungere al tab dei send messages una tool bar contenente:
-          - un bottone `select datasource` con i json-array
-          - un bottone `beautify` per la formattazione dei messaggi
-          - un bottone `send messages` per l'invio dei messaggi sulla coda
-- [x] nella pagina Queue aggiungere al tab dei send messages due aree di testo:
-          - l'area di testo editabile (body) in cui l'utente scriverà l'array di json da inviare come messaggi
-          - bottone `save json-array`
-          - tabella (results) in cui verranno scritti i risultati dell'invio 
-- [x] alla selezione del datasource si apre un popup :
-          - a sinistra i vari json-array con le loro descrizioni
-          - a destra la preview degli array
-- [x] scelto un json-array il body viene svuotato e riempito con l'array e formattato 
-- [x] all'invio dei messaggi il results viene svuotato e riempito con i risultati
-- [x] alla selezione `beautify` body viene formattato json like
-- [x] alla selezione `save json-array` viene richiesto con popup codice e descrizione e viene salvato il json-array
+## QSM-011 - Queue - Send messages
+- [x] nel tab Send la UI e' strutturata in 3 colonne:
+     - colonna sinistra: azioni su json-array (`create/edit`, `select datasource`, `save json-array`)
+     - colonna centrale: preview non editabile del body in formato json
+     - colonna destra: invio messaggi e apertura risultati
+- [x] `create/edit` apre un dialog `Write json-array` con:
+     - area di testo `body`
+     - bottone `beautify`
+     - bottone `OK` per confermare e chiudere
+- [x] `select datasource` apre un dialog con:
+     - selectbox con descrizioni dei json-array
+     - preview del payload selezionato
+     - bottone `use datasource` che aggiorna il body
+- [x] `save json-array` apre un dialog con:
+     - textfield `code`
+     - textfield `description`
+     - preview del payload
+     - bottone `save` per salvare in datasource
+- [x] `send messages` invia l'array JSON sulla queue e aggiorna i risultati visualizzabili in dialog
 
 ---
 
 ## QSM-012 - Queue - Receive messages
-- [ ]  nella pagina Queue aggiungere al tab dei receive messages una tool bar contenente:
-          - un bottone `receive messages` per la ricezione dei messaggi sulla coda
+- [x] nel tab Receive la UI e' strutturata in 3 colonne:
+     - colonna di sinistra: bottone `receive messages`
+     - colonna centrale: preview JSON non editabile dei messaggi ricevuti
+     - colonna di destra: bottoni `extract json-array` e `clean`
+- [x] alla selezione `receive messages` vengono ricevuti i messaggi dalla queue e la preview viene valorizzata
+- [x] alla selezione `extract json-array` dal body di ogni messaggio vengono estratti i dati e si apre un dialog per salvarli:
+     - textfield `code`
+     - textfield `description`
+     - preview del json-array estratto
+     - bottone `save` che salva il json-array
 
-- [ ] nella pagina Queue aggiungere al tab dei receive messages una area di testo:
-          - l'area di testo non editabile (body) in cui verranno scritti i messaggi ricevuti
-          - un bottone `copy to clipboard` per la copia dei messaggi ricevuti
-          - un bottone `extract json-array` per estrarre il json-array dal body dei messaggi ricevuti
-          - un bottone `clean` per pulire il body 
-- [ ] alla selezione `receive messages` vengono ricevuti i messaggi dalla coda e il body viene formattato json like 
-- [ ] alla selezione `copy to clipboard` il body viene formattato json like e copiato nella clipboard
-- [ ] alla selezione `extract json-array` dal body vengono estratti i Body e aperto un dialog con:
-          - textfield per code
-          - textfield per descrizione
-          - preview del json
-          - bottone di salva che salva il json array
+## QSM-013 - Queue - Ack messages
 
 ## QSM-030 - Azioni rapide in Home
 - [] crea scenario
@@ -78,6 +78,3 @@
 - [] aggiungi broker
 
 ---
-
-
-

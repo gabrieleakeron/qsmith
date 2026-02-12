@@ -15,7 +15,7 @@ def _open_queues_page(broker_id: str | None):
     st.session_state["selected_broker_id"] = broker_id
     st.session_state["queues_filter_broker_id"] = broker_id
     st.session_state["nav_broker_id"] = broker_id
-    st.switch_page("pages/2_Queues.py")
+    st.switch_page("pages/Queues.py")
 
 
 def render_brokers_container(brokers: list[dict]):
