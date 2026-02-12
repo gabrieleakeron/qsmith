@@ -23,6 +23,7 @@
 ## QSM-009 - Queues
 - [x] aggiunta sotto pagina per la gestione della singola coda (Queue)
 - [x] aggiungere pulsante per navigare alla pagina
+- [x] la pagina Queues deve mostrare i dati del broker selezionato (`broker_id`)
 - [x] la pagina e' composta da questi tab:
      - [x] test
      - [x] send messages
@@ -62,7 +63,7 @@
 - [x] nel tab Receive la UI e' strutturata in 3 colonne:
      - colonna di sinistra: bottone `receive messages`
      - colonna centrale: preview JSON non editabile dei messaggi ricevuti
-     - colonna di destra: bottoni `extract json-array` e `clean`
+     - colonna di destra: bottoni `ack messages`, `extract json-array` e `clean`
 - [x] alla selezione `receive messages` vengono ricevuti i messaggi dalla queue e la preview viene valorizzata
 - [x] alla selezione `extract json-array` dal body di ogni messaggio vengono estratti i dati e si apre un dialog per salvarli:
      - textfield `code`
@@ -71,6 +72,23 @@
      - bottone `save` che salva il json-array
 
 ## QSM-013 - Queue - Ack messages
+- [x] aggiunto bottone `ack messages` nella colonna azioni del tab Receive
+- [x] invio payload `messages` a endpoint `PUT /broker/{broker_id}/queue/{queue_id}/messages`
+- [x] fix endpoint backend per leggere `QueueMessagesDto` da body JSON
+- [x] dopo ack riuscito la preview dei messaggi viene pulita
+
+---
+
+## QSM-014 - Queue metrics refresh
+- [x] dopo `send messages` i dati queue (numero messaggi) vengono aggiornati
+- [x] dopo `receive messages` i dati queue (numero messaggi) vengono aggiornati
+- [x] aggiunto bottone `refresh` accanto a `test connection` nella pagina dettaglio queue
+
+---
+
+## QSM-015 - UI navigation refactor
+- [x] rinominati i file sotto `app/ui/pages` rimuovendo il prefisso numerico
+- [x] aggiornata la navigazione sidebar con bottoni per tutte le pagine principali
 
 ## QSM-030 - Azioni rapide in Home
 - [] crea scenario
