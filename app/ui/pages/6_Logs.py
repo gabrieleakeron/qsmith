@@ -3,7 +3,6 @@ from datetime import datetime
 import streamlit as st
 
 from api_client import api_get
-from state import set_status
 
 
 def _parse_dt(value):
@@ -47,10 +46,8 @@ def render_page():
         if st.button("Ricarica Logs"):
             try:
                 st.session_state["logs"] = api_get("/logs/")
-                set_status("Logs caricati")
             except Exception as exc:
                 st.error("Errore logs")
-                set_status(f"Errore logs: {exc}")
     with col2:
         days = st.number_input("Cancella log piu vecchi di (giorni)", min_value=1, value=30, step=1)
         if st.button("Pulisci Logs"):
@@ -58,10 +55,8 @@ def render_page():
                 api_get(f"/logs/{int(days)}")
                 st.session_state["logs"] = []
                 st.success("Logs puliti")
-                set_status("Logs puliti")
             except Exception as exc:
                 st.error("Errore pulizia logs")
-                set_status(f"Errore pulizia logs: {exc}")
 
     logs = st.session_state.get("logs", [])
     if not logs:

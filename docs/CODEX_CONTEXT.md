@@ -11,17 +11,14 @@ Qsmith e un backend FastAPI che gestisce configurazioni e orchestrazioni di elab
 - ElasticMQ (emulatore SQS in locale)
 - Docker, Testcontainers
 - Streamlit (UI)
-- Appsmith (UI legacy)
 
 **Mappa Repository**
 - `app/` codice applicazione FastAPI
 - `app/ui/` UI web Streamlit
 - `alembic/` migrazioni database
-- `appsmith/` configurazione UI e export `Qsmith.json`
 - `elasticmq/` docker-compose e config per ElasticMQ
 - `docker/` Dockerfile
 - `docs/` documentazione
-- `postman/` collection Postman
 
 **Entry Point e Flusso di Avvio**
 - `app/main.py`:
@@ -72,14 +69,9 @@ La UI usa `QSMITH_API_BASE_URL` (default in compose: `http://qsmith:9082`).
 - `elasticmq/docker-compose.yml`
 - Console web: `http://localhost:9325`
 
-**Appsmith**
-- `appsmith/docker-compose.yml`
-- Importare `appsmith/Qsmith.json` nell UI Appsmith
-
 **API e Strumenti**
 - Swagger: `http://host:port/docs`
 - OpenAPI: `http://host:port/openapi.json`
-- Postman: `postman/collection.json`
 - UI Web (Streamlit): `http://localhost:8501`
 
 **Test**
