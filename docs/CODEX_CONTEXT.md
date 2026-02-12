@@ -1,7 +1,7 @@
 # Qsmith - Contesto Progetto per Codex
 
 **Panoramica**
-Qsmith e un backend FastAPI che gestisce configurazioni e orchestrazioni di elaborazioni (scenari, step, operazioni), con integrazione a broker di messaggistica, code e sorgenti dati. Usa PostgreSQL come storage principale e inizializza code ElasticMQ locali per lo sviluppo.
+Qsmith e un queue manager composto da backend FastAPI e UI Streamlit. Gestisce broker SQS (ElasticMQ/Amazon), queue, sorgenti dati JSON array e orchestrazione di scenari (step/operations). Usa PostgreSQL come storage principale e puo inizializzare le queue ElasticMQ all'avvio.
 
 **Stack Tecnologico**
 - Python 3.13
@@ -13,11 +13,11 @@ Qsmith e un backend FastAPI che gestisce configurazioni e orchestrazioni di elab
 - Streamlit (UI)
 
 **Mappa Repository**
-- `app/` codice applicazione FastAPI
-- `app/ui/` UI web Streamlit
+- `app/` codice applicazione backend FastAPI
+- `app/ui/` UI web Streamlit (multipage)
 - `alembic/` migrazioni database
 - `elasticmq/` docker-compose e config per ElasticMQ
-- `docker/` Dockerfile
+- `docker/` Dockerfile API/UI
 - `docs/` documentazione
 
 **Entry Point e Flusso di Avvio**
@@ -26,6 +26,25 @@ Qsmith e un backend FastAPI che gestisce configurazioni e orchestrazioni di elab
   - esegue migrazioni Alembic all avvio
   - inizializza ElasticMQ creando code per i broker `elasticmq`
   - registra router API e handler di eccezioni
+
+**UI Streamlit**
+- Entry point: `app/ui/Qsmith.py`
+- Pagine principali:
+  - `app/ui/pages/Brokers.py`
+  - `app/ui/pages/Queues.py`
+  - `app/ui/pages/QueueDetails.py`
+  - `app/ui/pages/JsonArray.py`
+  - `app/ui/pages/Scenarios.py`
+  - `app/ui/pages/Logs.py`
+  - `app/ui/pages/Tools.py`
+
+**Router API principali**
+- `/broker` (connection e queue operations)
+- `/data-source` (json-array)
+- `/database` (database connections)
+- `/elaborations` (scenari, step, operations)
+- `/logs`
+- `/json_utils`
 
 **Concetti Chiave (Modello Dati)**
 - `json_payloads` config JSON generiche con tipo (`BROKER_CONNECTION`, ecc.)
@@ -43,7 +62,7 @@ File `.env` (valori di esempio, non usare credenziali reali nei documenti):
 DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<db>
 HOST_IP=<host>
 ```
-Nota: l avvio locale non e previsto. Tutto gira via Docker.
+Nota: il percorso operativo standard e via Docker.
 
 **Avvio (Obbligatorio via Docker)**
 Avvio solo tramite Docker:
@@ -70,8 +89,8 @@ La UI usa `QSMITH_API_BASE_URL` (default in compose: `http://qsmith:9082`).
 - Console web: `http://localhost:9325`
 
 **API e Strumenti**
-- Swagger: `http://host:port/docs`
-- OpenAPI: `http://host:port/openapi.json`
+- Swagger: `http://localhost:9082/docs`
+- OpenAPI: `http://localhost:9082/openapi.json`
 - UI Web (Streamlit): `http://localhost:8501`
 
 **Test**

@@ -20,6 +20,7 @@ else:
     st.session_state["selected_broker_id"] = None
 
 st.subheader("Brokers list")
+st.caption("Configure brokers and queues to start sending messages and testing scenarios.")
 st.divider()
 
 render_brokers_container(brokers)

@@ -9,7 +9,7 @@ st.sidebar.title("Qsmith")
 brokers_page = st.Page("pages/Brokers.py", title="Brokers")
 queues_page = st.Page("pages/Queues.py", title="Queues", url_path="queues")
 queue_details = st.Page("pages/QueueDetails.py", title="Queue details")
-datasources = st.Page("pages/Datasources.py", title="Data Sources")
+json_array = st.Page("pages/JsonArray.py", title="Json Array")
 scenarios = st.Page("pages/Scenarios.py", title="Scenarios")
 tools = st.Page("pages/Tools.py", title="Tools")
 logs = st.Page("pages/Logs.py", title="Logs")
@@ -46,9 +46,9 @@ for broker in brokers:
             
 st.sidebar.subheader("Datasources")
 _sidebar_nav_button(
-    label="Data Sources",
-    page_path="pages/Datasources.py",
-    key="nav_datasources_page",
+    label="Json Array",
+    page_path="pages/JsonArray.py",
+    key="nav_json_array_page",
 )
 st.sidebar.subheader("Scenarios")
 _sidebar_nav_button(
@@ -64,7 +64,7 @@ _sidebar_nav_button(label="Tools", page_path="pages/Tools.py", key="nav_tools_pa
 pg = st.navigation(
     {
         "Brokers & Queues": [brokers_page, queues_page, queue_details],
-        "Data Sources": [datasources],
+        "Data Sources": [json_array],
         "Scenarios": [scenarios],
         "Logs & Tools": [logs, tools]
     },

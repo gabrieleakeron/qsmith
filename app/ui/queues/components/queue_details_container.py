@@ -247,6 +247,7 @@ def render_queue_details_container(queue_data: dict, broker_id: str, queue_id: s
     
     queue_label = queue_data.get("description") or queue_data.get("code") or queue_id
     st.header(f"Queue [{queue_label}]")
+    st.caption("Send and receive messages, test connection and manage json-array datasources.")
 
     with st.container(border=True):
         col_sent, col_received, col_empty, col_refresh, col_test = st.columns(

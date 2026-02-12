@@ -42,7 +42,8 @@ if not selected_broker:
     st.info("Broker non trovato. Seleziona un broker dalla sidebar.")
     st.stop()
 
-st.subheader(f"{selected_broker.get('description', selected_broker.get('code', ''))}")
+st.subheader(f"Broker [{selected_broker.get('description', selected_broker.get('code', ''))}]")
+st.caption("Configure queues for this broker to start sending messages and testing scenarios.")
 st.divider()
 
 render_queues_container(
