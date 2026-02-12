@@ -44,3 +44,7 @@ def load_queue_data(broker_id: str, queue_id: str) -> dict | None:
         return queue_item
     except Exception:
         return None
+
+
+def test_queue_connection(broker_id: str, queue_id: str) -> dict:
+    return api_get(f"/broker/{broker_id}/queue/{queue_id}/test")

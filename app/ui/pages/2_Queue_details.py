@@ -28,4 +28,4 @@ if not queue_data:
     st.error("Errore caricamento dettaglio queue.")
     st.stop()
 
-render_queue_details_container(queue_data, queue_id)
+render_queue_details_container(queue_data, broker_id, queue_id)

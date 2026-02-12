@@ -1,9 +1,27 @@
 import streamlit as st
 
 from brokers.components.common import format_count
+from queues.services.queue_service import test_queue_connection
 
 
-def render_queue_details_container(queue_data: dict, queue_id: str):
+@st.dialog("Test connection")
+def queue_test_connection_dialog(broker_id: str, queue_id: str):
+    try:
+        with st.spinner("Testing connection..."):
+            result = test_queue_connection(broker_id, queue_id)
+    except Exception as exc:
+        st.error(f"Errore test connessione: {str(exc)}")
+        return
+
+    message = str(result.get("message", "Test completato."))
+    if "not valid" in message.lower():
+        st.error(message)
+    else:
+        st.success(message)
+    st.json(result)
+
+
+def render_queue_details_container(queue_data: dict, broker_id: str, queue_id: str):
     queue_label = queue_data.get("description") or queue_data.get("code") or queue_id
     st.header(queue_label)
 
@@ -16,7 +34,13 @@ def render_queue_details_container(queue_data: dict, queue_id: str):
     )
 
     with tab_test:
-        st.info("Tab test pronto per QSM-010.")
+        st.write("Verifica la connessione della queue e visualizza il risultato nel popup.")
+        if st.button(
+            "Test connection",
+            key=f"queue_test_connection_{queue_id}",
+            icon=":material/network_check:",
+        ):
+            queue_test_connection_dialog(broker_id, queue_id)
 
     with tab_send:
         st.info("Tab send messages pronto per implementazione.")
