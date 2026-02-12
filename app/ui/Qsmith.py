@@ -4,10 +4,9 @@ st.set_page_config(page_title="Qsmith UI", layout="wide")
 
 st.sidebar.title("Qsmith")
 
-
 brokers = st.Page("pages/2_Brokers.py", title="Brokers")
 queues = st.Page("pages/2_Queues.py", title="Queues")
-queue_details = st.Page("pages/2_Queue_details.py", title="Queue details")
+queue_details = st.Page("queues/components/queue_details.py", title="Queue details")
 datasources = st.Page("pages/3_datasources.py", title="Data Sources")
 scenarios = st.Page("pages/4_scenarios.py", title="Scenarios")
 tools = st.Page("pages/5_tools.py", title="Tools")

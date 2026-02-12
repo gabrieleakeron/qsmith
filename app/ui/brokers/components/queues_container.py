@@ -16,7 +16,7 @@ def _open_queue_page(broker_id: str | None, queue_id: str | None):
     st.session_state["selected_broker_id"] = broker_id
     st.session_state["nav_broker_id"] = broker_id
     st.session_state["nav_queue_id"] = queue_id
-    st.switch_page("pages/2_Queue_details.py")
+    st.switch_page("queues/components/queue_details.py")
 
 
 def render_queues_container(
@@ -29,10 +29,8 @@ def render_queues_container(
         st.info("Nessun broker configurato.")
         return None
 
-    bar_cols = st.columns([1, 3, 3, 1, 1], gap="small", vertical_alignment="center")
+    bar_cols = st.columns([3, 3, 1, 1], gap="small", vertical_alignment="center")
     with bar_cols[0]:
-        st.write("Filtra per broker:")
-    with bar_cols[1]:
         selected_broker_id = st.selectbox(
             "Broker",
             options=broker_ids,
@@ -50,17 +48,17 @@ def render_queues_container(
     else:
         queues = []
 
-    with bar_cols[3]:
+    with bar_cols[2]:
         st.button(
-            "Refresh",
+            "",
             key="refresh_queues_btn",
             on_click=lambda: load_queues(selected_broker_id, force=True),
             use_container_width=True,
             icon=":material/refresh:",
         )
-    with bar_cols[4]:
+    with bar_cols[3]:
         if st.button(
-            "Add queue",
+            "",
             key="add_queue_btn",
             use_container_width=True,
             disabled=not bool(broker),
@@ -77,9 +75,9 @@ def render_queues_container(
                 queue_label = queue_item.get("description") or queue_item.get("code") or "-"
                 row_cols[0].write(queue_label)
                 with row_cols[1]:
-                    st.write("Messages sent: " + format_count(queue_item.get("messages_sent")))
+                    st.write("Sent: " + format_count(queue_item.get("messages_sent")))
                 with row_cols[2]:
-                    st.write("Messages received: " + format_count(queue_item.get("messages_received")))
+                    st.write("Received: " + format_count(queue_item.get("messages_received")))
                 with row_cols[3]:
                     if st.button(
                         "",
@@ -113,8 +111,8 @@ def render_queues_container(
 
     loaded_at = st.session_state.get("queues_loaded_at")
     timestamp_label = format_last_update(loaded_at) if loaded_at else "-"
-    footer_cols = st.columns([6, 1], gap="small", vertical_alignment="center")
+    footer_cols = st.columns([2, 1], gap="small", vertical_alignment="center")
     with footer_cols[1]:
-        st.caption(f"Aggiornate: {timestamp_label}")
+        st.caption(f"Updated at: {timestamp_label}")
 
     return selected_broker_id

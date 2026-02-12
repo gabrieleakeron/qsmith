@@ -37,21 +37,21 @@
 ---
 
 ## QSM-011 - Queue - Send messages 
-- [ ] nella pagina Queue aggiungere al tab dei send messages una tool bar contenente:
+- [x] nella pagina Queue aggiungere al tab dei send messages una tool bar contenente:
           - un bottone `select datasource` con i json-array
           - un bottone `beautify` per la formattazione dei messaggi
           - un bottone `send messages` per l'invio dei messaggi sulla coda
-- [ ] nella pagina Queue aggiungere al tab dei send messages due aree di testo:
+- [x] nella pagina Queue aggiungere al tab dei send messages due aree di testo:
           - l'area di testo editabile (body) in cui l'utente scriverà l'array di json da inviare come messaggi
           - bottone `save json-array`
           - tabella (results) in cui verranno scritti i risultati dell'invio 
-- [ ] alla selezione del datasource si apre un popup :
+- [x] alla selezione del datasource si apre un popup :
           - a sinistra i vari json-array con le loro descrizioni
           - a destra la preview degli array
-- [ ] scelto un json-array il body viene svuotato e riempito con l'array e formattato 
-- [ ] all'invio dei messaggi il results viene svuotato e riempito con i risultati
-- [ ] alla selezione `beautify` body viene formattato json like
-- [ ] alla selezione `save json-array` viene richiesto con popup codice e descrizione e viene salvato il json-array
+- [x] scelto un json-array il body viene svuotato e riempito con l'array e formattato 
+- [x] all'invio dei messaggi il results viene svuotato e riempito con i risultati
+- [x] alla selezione `beautify` body viene formattato json like
+- [x] alla selezione `save json-array` viene richiesto con popup codice e descrizione e viene salvato il json-array
 
 ---
 
